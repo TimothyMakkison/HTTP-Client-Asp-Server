@@ -16,11 +16,12 @@ namespace Net_Core_Server.Data
 
         public async Task<User> AddNewUser(string username)
         {
-            var t = context.Add(new User() { UserName = username });
+            var role = context.Users.Count() > 0 ? Role.User : Role.Admin;
+            var newUser = context.Add(new User() { UserName = username, Role = role });
             await context.SaveChangesAsync();
-            return t.Entity;
+            return newUser.Entity;
         }
-        public bool Contains(string username)
+        public bool ContainsUsername(string username)
         {
             return context.Users.Any(user => user.UserName == username);
         }
