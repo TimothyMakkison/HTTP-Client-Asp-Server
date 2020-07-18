@@ -14,7 +14,7 @@ namespace Net_Core_Server.Controllers
     public class TalkBackController : ControllerBase
     {
         [HttpGet("hello")]
-        public ActionResult<string> GetHello() => Ok("Hello");
+        public ActionResult<string> GetHello() => Ok("Hello World");
 
         [HttpGet("sort")]
         public ActionResult<int[]> GetSort([FromQuery] List<int> integer)
@@ -23,8 +23,10 @@ namespace Net_Core_Server.Controllers
             {
                 return BadRequest($"Please input parameters");
             }
-            var sorted = integer.OrderBy(x => x);
-            return Ok(sorted);
+            else
+            {
+                return Ok(integer.OrderBy(x => x));
+            }
         }
     }
 }
