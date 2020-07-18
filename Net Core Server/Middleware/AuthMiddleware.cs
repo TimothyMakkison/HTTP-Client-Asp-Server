@@ -20,6 +20,7 @@ namespace Net_Core_Server.Middleware
             {
                 UserDataAccess access = new UserDataAccess(userContext);
                 var user = access.TryGet(Guid.Parse(apiKey));
+                
                 if (user != null)
                 {
                     var claims = new List<Claim>
@@ -27,9 +28,10 @@ namespace Net_Core_Server.Middleware
                         new Claim(ClaimTypes.Name, user.UserName),
                         new Claim(ClaimTypes.Role, user.Role),
                     };
-                    var identityClaim = new ClaimsIdentity(claims, user.ApiKey.ToString());
+                    var identityClaim = new ClaimsIdentity(claims, "ApiKey");
 
                     context.User.AddIdentity(identityClaim);
+                    var m = context.User.FindFirst("ApiKey");
                 }
             }
 
