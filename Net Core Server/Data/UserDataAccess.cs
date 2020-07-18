@@ -21,22 +21,10 @@ namespace Net_Core_Server.Data
             await context.SaveChangesAsync();
             return newUser.Entity;
         }
-        public bool ContainsUsername(string username)
-        {
-            return context.Users.Any(user => user.UserName == username);
-        }
-        public bool Contains(Guid apiKey)
-        {
-            return context.Users.Any(user => user.ApiKey == apiKey);
-        }
-        public bool Contains(Guid apiKey, string username)
-        {
-            return context.Users.Any(user => user.ApiKey == apiKey && user.UserName == username);
-        }
-        public User TryGet(Guid apiKey)
-        {
-            return context.Users.FirstOrDefault(user => user.ApiKey == apiKey);
-        }
+        public bool ContainsUsername(string username) => context.Users.Any(user => user.UserName == username);
+        public bool Contains(Guid apiKey) => context.Users.Any(user => user.ApiKey == apiKey);
+        public bool Contains(Guid apiKey, string username) => context.Users.Any(user => user.ApiKey == apiKey && user.UserName == username);
+        public User TryGet(Guid apiKey) => context.Users.FirstOrDefault(user => user.ApiKey == apiKey);
         public async Task Remove(Guid apiKey)
         {
             var first = context.Users.FirstOrDefault(user => user.ApiKey == apiKey);

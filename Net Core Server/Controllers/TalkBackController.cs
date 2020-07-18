@@ -14,10 +14,8 @@ namespace Net_Core_Server.Controllers
     public class TalkBackController : ControllerBase
     {
         [HttpGet("hello")]
-        public ActionResult<string> GetHello()
-        {
-            return Ok("Hello");
-        }
+        public ActionResult<string> GetHello() => Ok("Hello");
+
         [HttpGet("sort")]
         public ActionResult<int[]> GetSort([FromQuery] List<int> integer)
         {
