@@ -13,12 +13,6 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class TalkBackController : ControllerBase
     {
-        UserContext context;
-        public TalkBackController(UserContext context)
-        {
-            this.context = context;
-        }
-
         [HttpGet("hello")]
         public ActionResult<string> GetHello()
         {
@@ -33,17 +27,6 @@ namespace Net_Core_Server.Controllers
             }
             var sorted = integer.OrderBy(x => x);
             return Ok(sorted);
-        }
-        [HttpGet("add")]
-        public ActionResult<bool> Add([FromQuery] string word)
-        {
-            bool contains = false;
-            contains = context.Users.Any(user => user.UserName == word);
-            if (!contains)
-            {
-                context.Users.Add(new Models.User() { UserName = word });
-            }
-            return Ok(contains);
         }
     }
 }
