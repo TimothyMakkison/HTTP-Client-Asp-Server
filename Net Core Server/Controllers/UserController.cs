@@ -11,7 +11,7 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        UserDataAccess dataAccess;
+        readonly UserDataAccess dataAccess;
         public UserController(UserContext context)
         {
             dataAccess = new UserDataAccess(context);
@@ -21,7 +21,7 @@ namespace Net_Core_Server.Controllers
         public ActionResult<string> GetUser([FromQuery] string username)
         {
 
-            string output = dataAccess.Contains(username) ? "True - User Does Exist!" : "False - User Does Not Exist!"
+            string output = dataAccess.ContainsUsername(username) ? "True - User Does Exist!" : "False - User Does Not Exist!"
                                                                    + " Did you mean to do a POST to create a new user?";
             output = username == null ? "null" : output;
             return Ok(output);
@@ -33,7 +33,7 @@ namespace Net_Core_Server.Controllers
             {
                 return BadRequest("Oops. Make sure your body contains a string with your username and your Content - Type is Content - Type:application / json");
             }
-            var contains = dataAccess.Contains(jsonString);
+            var contains = dataAccess.ContainsUsername(jsonString);
             if (contains)
             {
                 return Forbid("Oops. This username is already in use. Please try again with a new username.");
