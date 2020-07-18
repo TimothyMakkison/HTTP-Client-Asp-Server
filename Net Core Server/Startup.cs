@@ -42,7 +42,7 @@ namespace Net_Core_Server
             }
 
             app.UseHttpsRedirection();
-
+            app.UseMiddleware<Middleware.AuthMiddleware>();
             app.UseRouting();
 
             app.UseAuthorization();
