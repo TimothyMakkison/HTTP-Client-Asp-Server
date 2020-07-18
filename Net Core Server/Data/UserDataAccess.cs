@@ -8,7 +8,7 @@ namespace Net_Core_Server.Data
 {
     public class UserDataAccess
     {
-        UserContext context;
+        private readonly UserContext context;
         public UserDataAccess(UserContext context)
         {
             this.context = context;
@@ -25,14 +25,16 @@ namespace Net_Core_Server.Data
         public bool Contains(Guid apiKey) => context.Users.Any(user => user.ApiKey == apiKey);
         public bool Contains(Guid apiKey, string username) => context.Users.Any(user => user.ApiKey == apiKey && user.UserName == username);
         public User TryGet(Guid apiKey) => context.Users.FirstOrDefault(user => user.ApiKey == apiKey);
-        public async Task Remove(Guid apiKey)
+        public async Task<bool> Remove(Guid apiKey)
         {
             var first = context.Users.FirstOrDefault(user => user.ApiKey == apiKey);
             if(first != null) 
             {
                 context.Users.Remove(first);
                 await context.SaveChangesAsync();
+                return true;
             }
+            return false;
         }
     }
 }
