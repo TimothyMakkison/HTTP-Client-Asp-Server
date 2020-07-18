@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Net_Core_Server.Data;
+using Net_Core_Server.Models;
 
 namespace Net_Core_Server.Controllers
 {
@@ -20,10 +24,8 @@ namespace Net_Core_Server.Controllers
         [HttpGet("new")]
         public ActionResult<string> GetUser([FromQuery] string username)
         {
-
             string output = dataAccess.ContainsUsername(username) ? "True - User Does Exist!" : "False - User Does Not Exist!"
                                                                    + " Did you mean to do a POST to create a new user?";
-            output = username == null ? "null" : output;
             return Ok(output);
         }
         [HttpPost("new")]
@@ -42,7 +44,18 @@ namespace Net_Core_Server.Controllers
             {
                 return Ok(dataAccess.AddNewUser(jsonString));
             }
-            
+        }
+        [HttpDelete("RemoveUser")]
+        [Authorize(Roles = "Admin,User")]
+        public ActionResult<bool> RemoveUser([FromQuery] string username)
+        {
+            var value = Request.Headers["ApiKey"];
+            var user = dataAccess.TryGet(Guid.Parse(value));
+
+            return username == user.UserName
+                   || user.Role == Role.Admin
+                ? Ok(dataAccess.Remove(user.ApiKey)) 
+                : (ActionResult<bool>)Ok(false);
         }
     }
 }
