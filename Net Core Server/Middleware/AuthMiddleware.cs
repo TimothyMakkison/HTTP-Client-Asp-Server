@@ -19,7 +19,7 @@ namespace Net_Core_Server.Middleware
             if (apiKey != "")
             {
                 UserDataAccess access = new UserDataAccess(userContext);
-                var user = access.TryGet(Guid.Parse(apiKey));
+                var user = await access.TryGet(Guid.Parse(apiKey));
                 
                 if (user != null)
                 {
@@ -31,7 +31,6 @@ namespace Net_Core_Server.Middleware
                     var identityClaim = new ClaimsIdentity(claims, "ApiKey");
 
                     context.User.AddIdentity(identityClaim);
-                    var m = context.User.FindFirst("ApiKey");
                 }
             }
 
