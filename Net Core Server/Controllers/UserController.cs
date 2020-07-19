@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Net_Core_Server.Data;
 using Net_Core_Server.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Net_Core_Server.Controllers
 {
@@ -22,40 +23,60 @@ namespace Net_Core_Server.Controllers
         }
 
         [HttpGet("new")]
-        public ActionResult<string> GetUser([FromQuery] string username)
+        public async Task<ActionResult<string>> GetUser([FromQuery] string username)
         {
-            string output = dataAccess.ContainsUsername(username) ? "True - User Does Exist!" : "False - User Does Not Exist!"
+            string output = await dataAccess.ContainsUsername(username) ? "True - User Does Exist!" : "False - User Does Not Exist!"
                                                                    + " Did you mean to do a POST to create a new user?";
             return Ok(output);
         }
         [HttpPost("new")]
-        public ActionResult<string> PostNewUser([FromBody] string jsonString)
+        public async Task<ActionResult<string>> PostNewUser([FromBody] string jsonString)
         {
             if (jsonString == null)
             {
                 return BadRequest("Oops. Make sure your body contains a string with your username and your Content - Type is Content - Type:application / json");
             }
-            var contains = dataAccess.ContainsUsername(jsonString);
+            var contains = await dataAccess.ContainsUsername(jsonString);
             if (contains)
             {
                 return Forbid("Oops. This username is already in use. Please try again with a new username.");
             }
             else
             {
-                return Ok(dataAccess.AddNewUser(jsonString));
+                return Ok(await dataAccess.AddNewUser(jsonString));
             }
         }
         [HttpDelete("RemoveUser")]
         [Authorize(Roles = "Admin,User")]
-        public ActionResult<bool> RemoveUser([FromQuery] string username)
+        public async Task<ActionResult<bool>> RemoveUser([FromQuery] string username)
         {
             var value = Request.Headers["ApiKey"];
-            var user = dataAccess.TryGet(Guid.Parse(value));
+            var user = await dataAccess.TryGet(Guid.Parse(value));
 
-            return username == user.UserName
-                   || user.Role == Role.Admin
-                ? Ok(dataAccess.Remove(user.ApiKey)) 
+            return username == user.UserName || user.Role == Role.Admin
+                ? Ok(await dataAccess.Remove(user.ApiKey)) 
                 : (ActionResult<bool>)Ok(false);
+        }
+        [HttpPost("ChangeRole")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<string>> UpdateRole([FromBody] JObject jObject)
+        {
+            string username = jObject["username"].Value<string>();
+            string role = jObject["role"].Value<string>();
+
+            if (!(role == Role.Admin || role == Role.User))
+            {
+                return BadRequest("NOT DONE: Role does not exist");
+            }
+            if (await dataAccess.ChangeRole(username, role))
+            {
+                return Ok("DONE");
+            }
+            else
+            {
+                return BadRequest("NOT DONE: Username does not exist");
+            }
+            return BadRequest("NOT DONE: An error occured");
         }
     }
 }
