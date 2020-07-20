@@ -24,7 +24,7 @@ namespace Net_Core_Server.Controllers
             return Ok($"Hello {user.UserName}");
         }
         [HttpGet("sha1")]
-        public async Task<ActionResult<string>> GetSha1([FromQuery] string message)
+        public ActionResult<string> GetSha1([FromQuery] string message)
         {
             if (message == null)
             {
@@ -34,13 +34,12 @@ namespace Net_Core_Server.Controllers
         }
 
         [HttpGet("sha256")]
-        public async Task<ActionResult<string>> GetSha256([FromQuery] string message)
+        public ActionResult<string> GetSha256([FromQuery] string message)
         {
             if (message == null)
             {
                 return BadRequest("Bad Request");
             }
-
             return Ok(Hasher(message, new SHA256Managed()));
         }
         private string Hasher(string value, HashAlgorithm hashAlgorithm)
