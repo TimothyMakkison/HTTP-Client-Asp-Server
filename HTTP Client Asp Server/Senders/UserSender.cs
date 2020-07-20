@@ -91,17 +91,17 @@ namespace HTTP_Client_Asp_Server.Senders
             var role = parts.LastOrDefault();
             var username = string.Join(" ", parts.Take(parts.Length - 1));
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"user/changerole")
+            var request = new HttpRequestMessage(HttpMethod.Post, "user/changerole")
             {
                 Content = ToHttpContent(new UserRolePair() { username = username, role = role })
             };
 
-            var response = SendAuthenticatedAsync(request);
+            var response = SendAuthenticatedAsync(request).Result;
             if(response == null)
             {
                 return;
             }
-            Console.WriteLine(response);
+            Console.WriteLine(GetResponseString(response).Result);
         }
     }
     public class UserRolePair

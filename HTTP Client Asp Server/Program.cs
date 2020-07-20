@@ -79,8 +79,9 @@ public static class Builder
         var commands = new List<CommandPair>();
 
         User sharedUser = new User();
-        TalkBackSender talkBack = new TalkBackSender(client);
-        UserSender userSender = new UserSender(client,sharedUser);
+        var talkBack = new TalkBackSender(client);
+        var userSender = new UserSender(client,sharedUser);
+        var protectedSender = new ProtectedSender(client, sharedUser);
 
         commands.Add(new CommandPair("TalkBack Hello", talkBack.HelloWorld));
         commands.Add(new CommandPair("TalkBack Sort", talkBack.Sort));
@@ -90,6 +91,13 @@ public static class Builder
         commands.Add(new CommandPair("User Delete", userSender.DeleteUser));
         commands.Add(new CommandPair("User Set", userSender.UserSet));
         commands.Add(new CommandPair("User Role", userSender.ChangeRole));
+
+        commands.Add(new CommandPair("Protected Hello", protectedSender.ProtectedHello));
+        commands.Add(new CommandPair("Protected SHA1", protectedSender.Sha1));
+        commands.Add(new CommandPair("Protected SHA256", protectedSender.Sha256));
+
+
+
 
         return commands;
     }
