@@ -95,9 +95,7 @@ public static class Builder
         commands.Add(new CommandPair("Protected Hello", protectedSender.ProtectedHello));
         commands.Add(new CommandPair("Protected SHA1", protectedSender.Sha1));
         commands.Add(new CommandPair("Protected SHA256", protectedSender.Sha256));
-
-
-
+        commands.Add(new CommandPair("Protected Get PublicKey", protectedSender.GetPublicKey));
 
         return commands;
     }

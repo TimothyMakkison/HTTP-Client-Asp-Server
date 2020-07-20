@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Net_Core_Server.Data;
+using Net_Core_Server.Encryption;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -42,6 +43,8 @@ namespace Net_Core_Server.Controllers
             }
             return Ok(Hasher(message, new SHA256Managed()));
         }
+        [HttpGet("getpublickey")]
+        public ActionResult<string> GetPublicKey() => Ok(CryptoRSA.PublicKey);
         private string Hasher(string value, HashAlgorithm hashAlgorithm)
         {
             var plaintextBytes = Encoding.UTF8.GetBytes(value);
