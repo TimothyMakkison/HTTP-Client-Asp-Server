@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 public class ConsoleHandler
 {
-    public static bool Running { get; set; }
     public void Run()
     {
-        Running = true;
         Console.WriteLine("Hello. What would you like to do?");
 
-        while (Running)
+        while (true)
         {
             var line = Console.ReadLine();
             Console.Clear();
@@ -19,14 +16,9 @@ public class ConsoleHandler
             Console.WriteLine("What would you like to do next ?");
         }
     }
-    public List<CommandPair> Commands { get; set; } = new List<CommandPair> 
-    { 
-        //new CommandPair("/Help", line=> Commands.ForEach(x => 
-        //{
-        //    Console.WriteLine("Listing commands:");
-        //    Console.WriteLine($"{x.Example}");
-        //})){Example="/Help"},
-        new CommandPair("Exit", line=> Running=false){Example = "/Clear"},
+    public List<CommandPair> Commands { get; set; } = new List<CommandPair>
+    {
+        new CommandPair("Exit", line=> Environment.Exit(0)){Example = "/Clear"},
     };
 
     public void ProcessLine(string line)
