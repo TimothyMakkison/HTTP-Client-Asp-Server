@@ -19,7 +19,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
             if (!User.Assigned)
             {
-                Console.WriteLine("Client must get the locally stored username and ApiKey.If they don’t yet exist the console must print “You need to do a User Post or User Set first");
+                Console.WriteLine("You need to do a User Post or User Set first");
                 return null;
             }
             request.Headers.Add("ApiKey", User.ApiKey);
