@@ -20,16 +20,11 @@ namespace Net_Core_Server.Encryption
         {
             using (hashAlgorithm)
             {
-                var plaintextBytes = Encoding.UTF8.GetBytes(value);
-                var hashBytes = hashAlgorithm.ComputeHash(plaintextBytes);
+                var plaintextBytes = Encoding.UTF8.GetBytes(value); // Convert to bytes
+                var hashBytes = hashAlgorithm.ComputeHash(plaintextBytes); // Hash bytes with given algorithm
+                var hexadecimal = BitConverter.ToString(hashBytes).Replace("-",string.Empty); // convert to hex
 
-                var sb = new StringBuilder();
-                foreach (var hashByte in hashBytes)
-                {
-                    sb.AppendFormat("{0:X2}", hashByte);
-                }
-
-                return sb.ToString();
+                return hexadecimal;
             }
         }
     }
