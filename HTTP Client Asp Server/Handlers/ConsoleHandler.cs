@@ -35,10 +35,7 @@ public class ConsoleHandler
                 break;
             default:
                 {
-                    foreach (var matching in matchingKeywords)
-                    {
-                        Console.WriteLine(matching.Example);
-                    }
+                    Console.WriteLine("Two or more commands match given input, please check commands for conflict");
                     break;
                 }
         }
