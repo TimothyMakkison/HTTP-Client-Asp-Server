@@ -1,9 +1,13 @@
 ﻿using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace HTTP_Client_Asp_Server.Senders
@@ -65,6 +69,41 @@ namespace HTTP_Client_Asp_Server.Senders
             var content = await GetResponseString(response);
             Console.WriteLine("Got Public Key");
             ServerPublicKey = content;
+        }
+        public async void SignMessage(string line)
+        {
+            if(ServerPublicKey == "" || ServerPublicKey == null)
+            {
+                Console.WriteLine("Client doesn’t yet have the public key"); 
+                return;
+            }
+
+            var value = line.Replace("Protected Sign ","");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sign?message={value}");
+            var taskResponse = SendAuthenticatedAsync(request);
+
+            // Hash while waiting for server response
+            var plaintextBytes = Encoding.UTF8.GetBytes(value); // Convert to bytes
+            using var hashAlgorithm = new SHA1Managed();
+            var hashBytes = hashAlgorithm.ComputeHash(plaintextBytes); // Hash bytes with given algorithm
+
+            var response = await taskResponse;
+            if (response == null)
+            {
+                return;
+            }
+
+            // Convert hex string (eg 4A-76-12) to byte array;
+            var hexadecimal = GetResponseString(response).Result;
+            var clean = hexadecimal.Split("-");
+            var signedData = clean.Select(x => Convert.ToByte(x, 16)).ToArray();
+
+            using var rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(ServerPublicKey);
+            var similar = rsa.VerifyHash(hashBytes, signedData, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
+
+            string outcome = similar ? "Message was successfully signed" : "Message was not successfully signed";
+            Console.WriteLine(outcome);
         }
     }
 }
