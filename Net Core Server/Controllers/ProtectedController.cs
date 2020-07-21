@@ -25,6 +25,7 @@ namespace Net_Core_Server.Controllers
             var user = await dataAccess.TryGet(guid);
             return Ok($"Hello {user.UserName}");
         }
+
         [HttpGet("sha1")]
         public ActionResult<string> GetSha1([FromQuery] string message)
         {
@@ -44,8 +45,10 @@ namespace Net_Core_Server.Controllers
             }
             return Ok(CryptoServices.Hasher(message, new SHA256Managed()));
         }
+
         [HttpGet("getpublickey")]
         public ActionResult<string> GetPublicKey() => Ok(CryptoServices.PublicKey);
+
         [HttpGet("sign")]
         public ActionResult<string> GetSignValue([FromQuery] string message)
         {
@@ -56,8 +59,7 @@ namespace Net_Core_Server.Controllers
             var plaintextBytes = Encoding.UTF8.GetBytes(message);
             var signedData = CryptoServices.RSA.SignData(plaintextBytes, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
 
-            var hexCollection = signedData.Select(value => String.Format("{0:X2}", value));
-            var hexadecimal = String.Join("-", hexCollection);
+            var hexadecimal = BitConverter.ToString(signedData);
             return Ok(hexadecimal);
         }
     }
