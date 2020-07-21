@@ -6,6 +6,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Net_Core_Server.Controllers
 {
@@ -31,7 +32,7 @@ namespace Net_Core_Server.Controllers
             {
                 return BadRequest("Bad Request");
             }
-            return Ok(Hasher(message, new SHA1Managed()));
+            return Ok(CryptoServices.Hasher(message, new SHA1Managed()));
         }
 
         [HttpGet("sha256")]
@@ -41,24 +42,23 @@ namespace Net_Core_Server.Controllers
             {
                 return BadRequest("Bad Request");
             }
-            return Ok(Hasher(message, new SHA256Managed()));
+            return Ok(CryptoServices.Hasher(message, new SHA256Managed()));
         }
         [HttpGet("getpublickey")]
-        public ActionResult<string> GetPublicKey() => Ok(CryptoRSA.PublicKey);
-        private string Hasher(string value, HashAlgorithm hashAlgorithm)
+        public ActionResult<string> GetPublicKey() => Ok(CryptoServices.PublicKey);
+        [HttpGet("sign")]
+        public ActionResult<string> GetSignValue([FromQuery] string message)
         {
-            var plaintextBytes = Encoding.UTF8.GetBytes(value);
-            var hashBytes = hashAlgorithm.ComputeHash(plaintextBytes);
-
-            var sb = new StringBuilder();
-            foreach (var hashByte in hashBytes)
+            if (message == null)
             {
-                sb.AppendFormat("{0:x2}", hashByte);
+                return BadRequest("Query must contain a value.");
             }
+            var plaintextBytes = Encoding.UTF8.GetBytes(message);
+            var signedData = CryptoServices.RSA.SignData(plaintextBytes, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
 
-            var hashString = sb.ToString();
-            hashAlgorithm.Dispose();
-            return hashString.ToUpper();
+            var hexCollection = signedData.Select(value => String.Format("{0:X2}", value));
+            var hexadecimal = String.Join("-", hexCollection);
+            return Ok(hexadecimal);
         }
     }
 }
