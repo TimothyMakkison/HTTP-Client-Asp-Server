@@ -26,11 +26,10 @@ namespace Net_Core_Server.Encryption
                 var sb = new StringBuilder();
                 foreach (var hashByte in hashBytes)
                 {
-                    sb.AppendFormat("{0:x2}", hashByte);
+                    sb.AppendFormat("{0:X2}", hashByte);
                 }
 
-                var hashString = sb.ToString();
-                return hashString.ToUpper();
+                return sb.ToString();
             }
         }
     }
