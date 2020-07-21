@@ -47,7 +47,7 @@ namespace Net_Core_Server.Controllers
         }
 
         [HttpGet("getpublickey")]
-        public ActionResult<string> GetPublicKey() => Ok(CryptoServices.PublicKey);
+        public ActionResult<string> GetPublicKey() => Ok(CryptoServices.RsaPublicKey);
 
         [HttpGet("sign")]
         public ActionResult<string> GetSignValue([FromQuery] string message)

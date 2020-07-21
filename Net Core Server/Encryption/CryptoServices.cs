@@ -11,11 +11,7 @@ namespace Net_Core_Server.Encryption
     {
         public static RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
 
-        public static string PublicKey => RSA.ToXmlString(false);
-        public static byte[] Sha1Sign(byte[] payload)
-        {
-            return RSA.SignData(payload, HashAlgorithmName.SHA1);
-        }
+        public static string RsaPublicKey => RSA.ToXmlString(false);
         public static string Hasher(string value, HashAlgorithm hashAlgorithm)
         {
             using (hashAlgorithm)
