@@ -51,7 +51,9 @@ public static class Builder
         commands.Add(new CommandPair("Protected SHA256", protectedSender.Sha256));
         commands.Add(new CommandPair("Protected Get PublicKey", protectedSender.GetPublicKey));
         commands.Add(new CommandPair("Protected Sign", protectedSender.SignMessage));
-        
+        commands.Add(new CommandPair("Protected AddFifty", protectedSender.AddFifty));
+
+
 
         return commands;
     }

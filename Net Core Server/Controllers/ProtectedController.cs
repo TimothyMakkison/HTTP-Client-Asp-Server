@@ -46,7 +46,7 @@ namespace Net_Core_Server.Controllers
             return Ok(CryptoServices.Hasher(message, new SHA256Managed()));
         }
 
-        [HttpGet("getpublickey")]
+        [HttpGet("getPublicKey")]
         public ActionResult<string> GetPublicKey() => Ok(CryptoServices.RsaPublicKey);
 
         [HttpGet("sign")]
@@ -61,6 +61,35 @@ namespace Net_Core_Server.Controllers
 
             var hexadecimal = BitConverter.ToString(signedData);
             return Ok(hexadecimal);
+        }
+        [Authorize(Roles="Admin")]
+        [HttpGet("addFifty")]
+        public ActionResult<string> AddFifty([FromQuery] string encryptedInteger, string encryptedSymKey, string encryptedIV)
+        {
+            try
+            {
+                var symKey = DecryptHex(encryptedSymKey);
+                var IV = DecryptHex(encryptedIV);
+
+                var integerByteForm = DecryptHex(encryptedInteger);
+                var integerString = Encoding.Default.GetString(integerByteForm);
+                var integer = Convert.ToInt32(integerString);
+                var returnInt = integer + 50;
+
+                var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(),symKey,IV);
+                var returnString = BitConverter.ToString(returnEncrypted);
+                return Ok(returnString);
+            }
+            catch
+            {
+                return BadRequest("Bad Request");
+            }
+
+            static byte[] DecryptHex(string hex)
+            {
+                var byteform = CryptoServices.HexToByte(hex);
+                return CryptoServices.RSA.Decrypt(byteform, true);
+            }
         }
     }
 }

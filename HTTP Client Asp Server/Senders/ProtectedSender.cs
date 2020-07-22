@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Handlers;
+using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -72,9 +73,8 @@ namespace HTTP_Client_Asp_Server.Senders
         }
         public async void SignMessage(string line)
         {
-            if(ServerPublicKey == "" || ServerPublicKey == null)
+            if(!HasKey())
             {
-                Console.WriteLine("Client doesn’t yet have the public key"); 
                 return;
             }
 
@@ -93,7 +93,7 @@ namespace HTTP_Client_Asp_Server.Senders
                 return;
             }
 
-            // Convert hex string (eg 4A-76-12) to byte array;
+            // Convert hex string to byte array;
             var hexadecimal = GetResponseString(response).Result;
             var clean = hexadecimal.Split("-");
             var signedData = clean.Select(x => Convert.ToByte(x, 16)).ToArray();
@@ -104,6 +104,62 @@ namespace HTTP_Client_Asp_Server.Senders
 
             string outcome = similar ? "Message was successfully signed" : "Message was not successfully signed";
             Console.WriteLine(outcome);
+        }
+
+        public async void AddFifty(string line)
+        {
+            if (!HasKey())
+            {
+                return;
+            }
+
+            var value = line.Replace("Protected AddFifty ", string.Empty);
+            if (!int.TryParse(value, out int _))
+            {
+                Console.WriteLine("A valid integer must be given!");
+                return;
+            }
+
+            using Aes Aes = Aes.Create();
+            using var rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(ServerPublicKey);
+
+            byte[] valueBytes = Encoding.UTF8.GetBytes(value); // Convert to bytes
+            string encryptValue = toEncryptedHex(valueBytes);
+            string encryptKey = toEncryptedHex(Aes.Key);
+            string encryptIV = toEncryptedHex(Aes.IV);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"protected/addfifty?encryptedInteger={encryptValue}" +
+                $"&encryptedSymKey={encryptKey}&encryptedIV={encryptIV}");
+            HttpResponseMessage response = await SendAuthenticatedAsync(request);
+
+            if(response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine("An error occurred!");
+                return;
+            }
+
+            var encryptedHex = await GetResponseString(response);
+            var encryptedBytes = CryptoHelper.HexToByte(encryptedHex);
+            var decrypted = CryptoHelper.AesDecrypt(encryptedBytes, Aes.Key, Aes.IV);
+
+            Console.WriteLine(decrypted);
+
+
+            string toEncryptedHex (byte[] input)
+            {
+                byte[] encrypted = rsa.Encrypt(input, true);
+                return BitConverter.ToString(encrypted);
+            }
+        }
+
+        private bool HasKey()
+        {
+            if (ServerPublicKey != null || ServerPublicKey != "")
+                return true;
+
+            Console.WriteLine("Client doesn’t yet have the public key");
+            return false;
         }
     }
 }
