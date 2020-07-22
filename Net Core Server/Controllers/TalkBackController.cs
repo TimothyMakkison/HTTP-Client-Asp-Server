@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Net_Core_Server.Data;
 
 
 namespace Net_Core_Server.Controllers
@@ -17,16 +13,7 @@ namespace Net_Core_Server.Controllers
         public ActionResult<string> GetHello() => Ok("Hello World");
 
         [HttpGet("sort")]
-        public ActionResult<int[]> GetSort([FromQuery] List<int> integer)
-        {
-            if (integer == null)
-            {
-                return BadRequest($"Please input parameters");
-            }
-            else
-            {
-                return Ok(integer.OrderBy(x => x));
-            }
-        }
+        public ActionResult<int[]> GetSort([FromQuery] List<int> integers)
+            => integers == null ? BadRequest($"Please input parameters") : (ActionResult<int[]>)Ok(integers.OrderBy(x => x));
     }
 }
