@@ -1,11 +1,7 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -13,22 +9,16 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         public TalkBackSender(HttpClient client) : base(client) { }
 
-        public void HelloWorld(string line)
+        public async void HelloWorld(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
-            HttpResponseMessage response = SendAsync(request).Result;
-            var product = GetResponseString(response).Result;
+            HttpResponseMessage response = await SendAsync(request);
+            var product = await GetResponseString(response);
             Console.WriteLine(product);
         }
         public void Sort(string line)
         {
-            line = line.Replace("TalkBack Sort", "");
-            line = line.Replace(" ", "");
-
-            var values = Split(line);
-            var valuePairs = values.Select(x => new Pair() { Name = "integer", Value = x });
-
-            var uri = Handlers.UriBuilder.Build("talkback/sort", valuePairs);
+            string uri = "talkback/sort" + ExtractParameters(line);
 
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             HttpResponseMessage response = SendAsync(request).Result;
@@ -36,12 +26,22 @@ namespace HTTP_Client_Asp_Server.Senders
 
             Console.WriteLine(product);
         }
-        private IEnumerable<string> Split(string value)
+        private string ExtractParameters(string line)
         {
-            value = value.Replace("[", "");
-            value = value.Replace("]", "");
+            // Takes read line of TalkBack Sort [1,2,3] and generates query parameters.
+            var input = line.Replace("TalkBack Sort", "");
+            var inputSpaceless = input.Replace(" ", "");
 
-            return value.Split(',');
+            var values = inputSpaceless.Replace("[", string.Empty);
+            values = values.Replace("]", string.Empty);
+            var valueArray = values.Split(',');
+
+            if (!(values.Length == 1 && valueArray.First() == ""))
+            {
+                var namedValues = values.Select(x => $"integers={x}");
+                return "?" + string.Join('&', namedValues);
+            }
+            return "";
         }
     }
 }
