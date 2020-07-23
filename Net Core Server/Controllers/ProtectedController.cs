@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Net_Core_Server.Data;
 using Net_Core_Server.Encryption;
-using Net_Core_Server.Models;
 using System;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Net_Core_Server.Controllers
 {
@@ -16,11 +15,15 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class ProtectedController : ControllerBase
     {
+        private readonly UserDataAccess dataAccess;
+        public ProtectedController(UserContext context) => dataAccess = new UserDataAccess(context);
+
         [HttpGet("hello")]
         public async Task<ActionResult<string>> GetHello()
         {
-            string username = User.FindFirstValue(ClaimTypes.Name);
-            return Ok($"Hello {username}");
+            var guid = Guid.Parse(Request.Headers["ApiKey"]);
+            var user = await dataAccess.TryGet(guid);
+            return Ok($"Hello {user.UserName}");
         }
 
         [HttpGet("sha1")]
@@ -59,8 +62,7 @@ namespace Net_Core_Server.Controllers
             var hexadecimal = BitConverter.ToString(signedData);
             return Ok(hexadecimal);
         }
-
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles="Admin")]
         [HttpGet("addFifty")]
         public ActionResult<string> AddFifty([FromQuery] string encryptedInteger, string encryptedSymKey, string encryptedIV)
         {
@@ -68,13 +70,13 @@ namespace Net_Core_Server.Controllers
             {
                 var symKey = DecryptHex(encryptedSymKey);
                 var IV = DecryptHex(encryptedIV);
-                var integerByteForm = DecryptHex(encryptedInteger);
 
+                var integerByteForm = DecryptHex(encryptedInteger);
                 var integerString = Encoding.Default.GetString(integerByteForm);
                 var integer = Convert.ToInt32(integerString);
                 var returnInt = integer + 50;
 
-                var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(), symKey, IV);
+                var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(),symKey,IV);
                 var returnString = BitConverter.ToString(returnEncrypted);
                 return Ok(returnString);
             }
