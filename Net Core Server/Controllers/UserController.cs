@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Net_Core_Server.Data;
 using Net_Core_Server.Models;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Net_Core_Server.Controllers
 {
@@ -36,8 +33,7 @@ namespace Net_Core_Server.Controllers
             {
                 return BadRequest("Oops. Make sure your body contains a string with your username and your Content - Type is Content - Type:application / json");
             }
-            var contains = await dataAccess.ContainsUsername(jsonString);
-            if (contains)
+            if (await dataAccess.ContainsUsername(jsonString))
             {
                 return Forbid("Oops. This username is already in use. Please try again with a new username.");
             }
@@ -47,15 +43,19 @@ namespace Net_Core_Server.Controllers
             }
         }
         [HttpDelete("RemoveUser")]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize]
         public async Task<ActionResult<bool>> RemoveUser([FromQuery] string username)
         {
-            var value = Request.Headers["ApiKey"];
-            var user = await dataAccess.TryGet(Guid.Parse(value));
+            string actualUsername = User.FindFirstValue(ClaimTypes.Name);
 
-            return username == user.UserName || user.Role == Role.Admin
-                ? Ok(await dataAccess.Remove(user.ApiKey)) 
-                : (ActionResult<bool>)Ok(false);
+            if (username == actualUsername)
+            {
+                var apiKeyString = Request.Headers["ApiKey"].ToString();
+                var apiKey = Guid.Parse(apiKeyString);
+
+                return Ok(await dataAccess.Remove(apiKey));
+            }
+            return Ok(false);
         }
         [HttpPost("ChangeRole")]
         [Authorize(Roles = "Admin")]
