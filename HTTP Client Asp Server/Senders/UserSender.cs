@@ -12,9 +12,7 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class UserSender : AuthenticatedSender
     {
-        public UserSender(HttpClient client, User user) : base(client,user)
-        {
-        }
+        public UserSender(HttpClient client, User user) : base(client,user) { }
 
         public void GetUser(string line)
         {
@@ -67,7 +65,8 @@ namespace HTTP_Client_Asp_Server.Senders
         }
         public void DeleteUser(string line)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={User.Username}");
+            var value = line.Replace("User Delete ", "");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={value}");
             var response = SendAuthenticatedAsync(request).Result;
             if(response == null)
             {
@@ -75,7 +74,8 @@ namespace HTTP_Client_Asp_Server.Senders
             }
 
             var product = GetResponseString(response).Result;
-            Console.WriteLine(product.First().ToString().ToUpper() + product.Substring(1));
+            var capitalised = product.First().ToString().ToUpper() + product.Substring(1);
+            Console.WriteLine(capitalised);
         }
         public void ChangeRole(string line)
         {
