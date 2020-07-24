@@ -6,7 +6,6 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Net_Core_Server.Controllers
 {
@@ -16,6 +15,7 @@ namespace Net_Core_Server.Controllers
     public class ProtectedController : ControllerBase
     {
         private readonly UserDataAccess dataAccess;
+
         public ProtectedController(UserContext context) => dataAccess = new UserDataAccess(context);
 
         [HttpGet("hello")]
@@ -62,7 +62,8 @@ namespace Net_Core_Server.Controllers
             var hexadecimal = BitConverter.ToString(signedData);
             return Ok(hexadecimal);
         }
-        [Authorize(Roles="Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("addFifty")]
         public ActionResult<string> AddFifty([FromQuery] string encryptedInteger, string encryptedSymKey, string encryptedIV)
         {
@@ -76,7 +77,7 @@ namespace Net_Core_Server.Controllers
                 var integer = Convert.ToInt32(integerString);
                 var returnInt = integer + 50;
 
-                var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(),symKey,IV);
+                var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(), symKey, IV);
                 var returnString = BitConverter.ToString(returnEncrypted);
                 return Ok(returnString);
             }

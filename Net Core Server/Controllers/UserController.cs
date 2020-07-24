@@ -13,7 +13,8 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        readonly UserDataAccess dataAccess;
+        private readonly UserDataAccess dataAccess;
+
         public UserController(UserContext context)
         {
             dataAccess = new UserDataAccess(context);
@@ -26,6 +27,7 @@ namespace Net_Core_Server.Controllers
                                                                    + " Did you mean to do a POST to create a new user?";
             return Ok(output);
         }
+
         [HttpPost("new")]
         public async Task<ActionResult<string>> PostNewUser([FromBody] string jsonString)
         {
@@ -42,6 +44,7 @@ namespace Net_Core_Server.Controllers
                 return Ok(await dataAccess.AddNewUser(jsonString));
             }
         }
+
         [HttpDelete("RemoveUser")]
         [Authorize]
         public async Task<ActionResult<bool>> RemoveUser([FromQuery] string username)
@@ -57,6 +60,7 @@ namespace Net_Core_Server.Controllers
             }
             return Ok(false);
         }
+
         [HttpPost("ChangeRole")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<string>> UpdateRole([FromBody] JObject jObject)

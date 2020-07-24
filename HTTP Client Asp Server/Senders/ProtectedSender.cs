@@ -1,21 +1,19 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using HTTP_Client_Asp_Server.Models;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
     public class ProtectedSender : AuthenticatedSender
     {
         public string ServerPublicKey { get; set; }
+
         public ProtectedSender(HttpClient client, User user) : base(client, user)
         {
         }
@@ -30,6 +28,7 @@ namespace HTTP_Client_Asp_Server.Senders
             }
             Console.WriteLine(GetResponseString(response).Result);
         }
+
         public void Sha1(string line)
         {
             var value = line.Replace("Protected SHA1 ", "");
@@ -41,6 +40,7 @@ namespace HTTP_Client_Asp_Server.Senders
             }
             Console.WriteLine(GetResponseString(response).Result);
         }
+
         public void Sha256(string line)
         {
             var value = line.Replace("Protected SHA256 ", "");
@@ -52,12 +52,13 @@ namespace HTTP_Client_Asp_Server.Senders
             }
             Console.WriteLine(GetResponseString(response).Result);
         }
+
         public async void GetPublicKey(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/getpublickey");
             var response = SendAuthenticatedAsync(request).Result;
 
-            if(response == null)
+            if (response == null)
             {
                 return;
             }
@@ -71,14 +72,15 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Got Public Key");
             ServerPublicKey = content;
         }
+
         public async void SignMessage(string line)
         {
-            if(!HasKey())
+            if (!HasKey())
             {
                 return;
             }
 
-            var value = line.Replace("Protected Sign ","");
+            var value = line.Replace("Protected Sign ", "");
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sign?message={value}");
             var taskResponse = SendAuthenticatedAsync(request);
 
@@ -133,7 +135,7 @@ namespace HTTP_Client_Asp_Server.Senders
                 $"&encryptedSymKey={encryptKey}&encryptedIV={encryptIV}");
             HttpResponseMessage response = await SendAuthenticatedAsync(request);
 
-            if(response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine("An error occurred!");
                 return;
@@ -145,8 +147,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             Console.WriteLine(decrypted);
 
-
-            string toEncryptedHex (byte[] input)
+            string toEncryptedHex(byte[] input)
             {
                 byte[] encrypted = rsa.Encrypt(input, true);
                 return BitConverter.ToString(encrypted);

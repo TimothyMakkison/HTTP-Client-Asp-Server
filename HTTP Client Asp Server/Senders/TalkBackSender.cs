@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
     public class TalkBackSender : BaseSender
     {
-        public TalkBackSender(HttpClient client) : base(client) { }
+        public TalkBackSender(HttpClient client) : base(client)
+        {
+        }
 
         public async void HelloWorld(string line)
         {
@@ -16,32 +17,35 @@ namespace HTTP_Client_Asp_Server.Senders
             var product = await GetResponseString(response);
             Console.WriteLine(product);
         }
+
         public void Sort(string line)
         {
-            string uri = "talkback/sort" + ExtractParameters(line);
+            // Takes read line of and remove command words
+            var input = line.Replace("TalkBack Sort", "");
+            var inputSpaceless = input.Replace(" ", "");
+
+            // Check string is in correct form, print error if incorrect
+            if (!(inputSpaceless.Contains('[') && inputSpaceless.Contains(']')))
+            {
+                Console.WriteLine("Invalid array form.");
+                return;
+            }
+            var parameterString = inputSpaceless.Replace("[", string.Empty).Replace("]", string.Empty);
+            var values = parameterString.Split(',');
+
+            // Add parameters to string.
+            string uri = "talkback/sort";
+            if (!(values.Length == 1 && values.First() == ""))
+            {
+                var namedValues = values.Select(x => $"integers={x}");
+                uri += "?" + string.Join('&', namedValues);
+            }
 
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             HttpResponseMessage response = SendAsync(request).Result;
             var product = response.Content.ReadAsStringAsync().Result;
 
             Console.WriteLine(product);
-        }
-        private string ExtractParameters(string line)
-        {
-            // Takes read line of TalkBack Sort [1,2,3] and generates query parameters.
-            var input = line.Replace("TalkBack Sort", "");
-            var inputSpaceless = input.Replace(" ", "");
-
-            var values = inputSpaceless.Replace("[", string.Empty);
-            values = values.Replace("]", string.Empty);
-            var valueArray = values.Split(',');
-
-            if (!(values.Length == 1 && valueArray.First() == ""))
-            {
-                var namedValues = values.Select(x => $"integers={x}");
-                return "?" + string.Join('&', namedValues);
-            }
-            return "";
         }
     }
 }

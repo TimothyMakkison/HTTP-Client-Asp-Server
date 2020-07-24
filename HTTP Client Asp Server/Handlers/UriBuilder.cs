@@ -22,6 +22,5 @@ namespace HTTP_Client_Asp_Server.Handlers
     {
         public string Name { get; set; }
         public string Value { get; set; }
-
     }
 }

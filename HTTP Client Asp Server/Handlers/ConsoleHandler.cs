@@ -16,6 +16,7 @@ public class ConsoleHandler
             Console.WriteLine("What would you like to do next ?");
         }
     }
+
     public List<CommandPair> Commands { get; set; } = new List<CommandPair>
     {
         new CommandPair("Exit", line=> Environment.Exit(0)){Example = "/Clear"},
@@ -30,9 +31,11 @@ public class ConsoleHandler
             case 1:
                 matchingKeywords.FirstOrDefault().Operation.Invoke(line);
                 break;
+
             case 0:
                 Console.WriteLine("No matching commands please check spelling or type /Help");
                 break;
+
             default:
                 {
                     Console.WriteLine("Two or more commands match given input, please check commands for conflict");

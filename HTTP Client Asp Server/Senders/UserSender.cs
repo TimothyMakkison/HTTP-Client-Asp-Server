@@ -22,6 +22,7 @@ namespace HTTP_Client_Asp_Server.Senders
             var product = GetResponseString(response).Result;
             Console.WriteLine(product);
         }
+
         public void NewUser(string line)
         {
             var name = line.Replace("User Post ", "");
@@ -48,6 +49,7 @@ namespace HTTP_Client_Asp_Server.Senders
                 Console.WriteLine(product);
             }
         }
+
         public void UserSet(string line)
         {
             var values = line.Replace("User Set ", "");
@@ -62,6 +64,7 @@ namespace HTTP_Client_Asp_Server.Senders
             User.Username = string.Join(" ", parts.Take(parts.Length - 1));
             User.Assigned = true;
         }
+
         public void DeleteUser(string line)
         {
             string value = line.Replace("User Remove ", "");
@@ -76,6 +79,7 @@ namespace HTTP_Client_Asp_Server.Senders
             var success = Convert.ToBoolean(product);
             Console.WriteLine(success);
         }
+
         public void ChangeRole(string line)
         {
             line = line.Replace("User Role ", "");

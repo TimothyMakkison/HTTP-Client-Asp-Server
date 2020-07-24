@@ -10,7 +10,9 @@ namespace Net_Core_Server.Middleware
     public class AuthMiddleware
     {
         private readonly RequestDelegate next;
+
         public AuthMiddleware(RequestDelegate next) => this.next = next;
+
         public async Task InvokeAsync(HttpContext context, UserContext userContext)
         {
             var dict = context.Request.Headers;
@@ -20,7 +22,7 @@ namespace Net_Core_Server.Middleware
             {
                 UserDataAccess access = new UserDataAccess(userContext);
                 var user = await access.TryGet(Guid.Parse(apiKey));
-                
+
                 if (user != null)
                 {
                     var claims = new List<Claim>

@@ -1,20 +1,19 @@
 ﻿using HTTP_Client_Asp_Server.Models;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
     public class AuthenticatedSender : BaseSender
     {
-
         public User User { get; set; }
+
         public AuthenticatedSender(HttpClient client, User user) : base(client)
         {
             User = user;
         }
+
         protected async virtual Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request)
         {
             if (!User.Assigned)

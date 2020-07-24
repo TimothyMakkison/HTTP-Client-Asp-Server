@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace HTTP_Client_Asp_Server.Handlers
 {
@@ -27,6 +24,7 @@ namespace HTTP_Client_Asp_Server.Handlers
             }
             return msEncrypt.ToArray();
         }
+
         public static byte[] HexToByte(string hex)
         {
             string[] hexCollection = hex.Split("-");

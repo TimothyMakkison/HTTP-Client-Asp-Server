@@ -9,8 +9,10 @@ namespace Net_Core_Server.Models
         {
             //ApiKey = new Guid();
         }
+
         [Key]
         public Guid ApiKey { get; set; }
+
         public string UserName { get; set; }
         public string Role { get; set; }
     }

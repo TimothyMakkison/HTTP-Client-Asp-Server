@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace Net_Core_Server.Controllers
 {
     [Route("api/[controller]")]

@@ -1,18 +1,14 @@
 ﻿using HTTP_Client_Asp_Server.Models;
 using HTTP_Client_Asp_Server.Senders;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Web;
 
 namespace HTTP_Client_Asp_Server
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             ConsoleHandler ch = new ConsoleHandler();
             ch.Commands.AddRange(Builder.Commands());
@@ -34,7 +30,7 @@ public static class Builder
 
         User sharedUser = new User();
         var talkBack = new TalkBackSender(client);
-        var userSender = new UserSender(client,sharedUser);
+        var userSender = new UserSender(client, sharedUser);
         var protectedSender = new ProtectedSender(client, sharedUser);
 
         commands.Add(new CommandPair("TalkBack Hello", talkBack.HelloWorld));
@@ -52,8 +48,6 @@ public static class Builder
         commands.Add(new CommandPair("Protected Get PublicKey", protectedSender.GetPublicKey));
         commands.Add(new CommandPair("Protected Sign", protectedSender.SignMessage));
         commands.Add(new CommandPair("Protected AddFifty", protectedSender.AddFifty));
-
-
 
         return commands;
     }
