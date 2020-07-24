@@ -1,5 +1,6 @@
 ﻿using HTTP_Client_Asp_Server.Models;
 using HTTP_Client_Asp_Server.Senders;
+using HTTP_Client_Asp_Server.Senders.TalkBack;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -33,8 +34,8 @@ public static class Builder
         var userSender = new UserSender(client, sharedUser);
         var protectedSender = new ProtectedSender(client, sharedUser);
 
-        commands.Add(new CommandPair("TalkBack Hello", talkBack.HelloWorld));
-        commands.Add(new CommandPair("TalkBack Sort", talkBack.Sort));
+        commands.Add(new CommandPair("TalkBack Hello", new TalkBackHello(client).Process));
+        commands.Add(new CommandPair("TalkBack Sort", new TalkBackSort(client).Process));
 
         commands.Add(new CommandPair("User Get", userSender.GetUser));
         commands.Add(new CommandPair("User Post", userSender.NewUser));
