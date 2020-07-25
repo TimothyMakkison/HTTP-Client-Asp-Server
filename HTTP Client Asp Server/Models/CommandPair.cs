@@ -9,7 +9,5 @@ public class CommandPair
     }
 
     public string InputString { get; set; }
-    public string Example { get; set; }
-    public string Description { get; set; }
     public Action<string> Operation { get; set; }
 }

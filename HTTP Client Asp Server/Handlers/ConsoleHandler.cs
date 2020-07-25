@@ -19,7 +19,7 @@ public class ConsoleHandler
 
     public List<CommandPair> Commands { get; set; } = new List<CommandPair>
     {
-        new CommandPair("Exit", line=> Environment.Exit(0)){Example = "/Clear"},
+        new CommandPair("Exit", line=> Environment.Exit(0)),
     };
 
     public void ProcessLine(string line)
