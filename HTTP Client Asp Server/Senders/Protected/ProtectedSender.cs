@@ -1,12 +1,7 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
-using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Models;
 using System;
-using System.Data;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace HTTP_Client_Asp_Server.Senders
 {

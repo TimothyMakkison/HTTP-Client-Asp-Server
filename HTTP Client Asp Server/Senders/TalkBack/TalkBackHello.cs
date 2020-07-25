@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace HTTP_Client_Asp_Server.Senders.TalkBack
+namespace HTTP_Client_Asp_Server.Senders
 {
     public class TalkBackHello : BaseSender
     {

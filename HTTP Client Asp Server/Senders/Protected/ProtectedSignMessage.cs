@@ -10,10 +10,12 @@ namespace HTTP_Client_Asp_Server.Senders
     public class ProtectedSignMessage : AuthenticatedSender
     {
         private CryptoKey ServerPublicKey { get; set; }
+
         public ProtectedSignMessage(HttpClient client, User user, CryptoKey cryptoKey) : base(client, user)
         {
             ServerPublicKey = cryptoKey;
         }
+
         public async void Process(string line)
         {
             if (!HasKey())
@@ -42,18 +44,21 @@ namespace HTTP_Client_Asp_Server.Senders
             string outcome = validSignature ? "Message was successfully signed" : "Message was not successfully signed";
             Console.WriteLine(outcome);
         }
+
         private bool VerifyHash(byte[] hash, byte[] signature)
         {
             using var rsa = new RSACryptoServiceProvider();
             rsa.FromXmlString(ServerPublicKey.Key);
             return rsa.VerifyHash(hash, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
         }
+
         private byte[] Hash(string value)
         {
             var plaintextBytes = Encoding.UTF8.GetBytes(value);
             using var hashAlgorithm = new SHA1Managed();
             return hashAlgorithm.ComputeHash(plaintextBytes);
         }
+
         private bool HasKey()
         {
             if (ServerPublicKey.HasKey)

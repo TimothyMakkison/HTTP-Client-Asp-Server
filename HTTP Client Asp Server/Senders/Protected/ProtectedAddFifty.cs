@@ -1,7 +1,6 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using HTTP_Client_Asp_Server.Models;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -13,6 +12,7 @@ namespace HTTP_Client_Asp_Server.Senders
     public class ProtectedAddFifty : AuthenticatedSender
     {
         private CryptoKey ServerPublicKey { get; set; }
+
         public ProtectedAddFifty(HttpClient client, User user, CryptoKey cryptoKey) : base(client, user)
         {
             ServerPublicKey = cryptoKey;
@@ -45,13 +45,14 @@ namespace HTTP_Client_Asp_Server.Senders
             string decrypted = await Decrypt(response, aes);
             Console.WriteLine(decrypted);
         }
+
         private HttpRequestMessage GenerateWebRequest(string value, Aes Aes)
         {
             using var rsa = new RSACryptoServiceProvider();
             rsa.FromXmlString(ServerPublicKey.Key);
 
-            // Convert value to bytes then 
-            byte[] valueBytes = Encoding.UTF8.GetBytes(value); 
+            // Convert value to bytes then
+            byte[] valueBytes = Encoding.UTF8.GetBytes(value);
             string encryptValue = toEncryptedHex(valueBytes);
             string encryptKey = toEncryptedHex(Aes.Key);
             string encryptIV = toEncryptedHex(Aes.IV);
@@ -65,12 +66,14 @@ namespace HTTP_Client_Asp_Server.Senders
                 return BitConverter.ToString(encrypted);
             }
         }
+
         private async Task<string> Decrypt(HttpResponseMessage response, Aes aes)
         {
             var encryptedHex = await GetResponseString(response);
             var encryptedBytes = CryptoHelper.HexToByte(encryptedHex);
             return CryptoHelper.AesDecrypt(encryptedBytes, aes.Key, aes.IV);
         }
+
         private bool HasKey()
         {
             if (ServerPublicKey.HasKey)

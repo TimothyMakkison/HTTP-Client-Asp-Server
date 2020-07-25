@@ -14,6 +14,7 @@ namespace HTTP_Client_Asp_Server
             ch.Commands.AddRange(Commands("https://localhost:44391/api/"));
             ch.Run();
         }
+
         private static List<CommandPair> Commands(string baseAddress)
         {
             HttpClient client = new HttpClient
