@@ -23,7 +23,8 @@ namespace HTTP_Client_Asp_Server
 
             User sharedUser = new User();
             var userSender = new UserSender(client, sharedUser);
-            var protectedSender = new ProtectedSender(client, sharedUser);
+            var serverPublicKey = new CryptoKey();
+            var protectedSender = new ProtectedSender(client, sharedUser, serverPublicKey);
 
             var commands = new List<CommandPair>
         {
@@ -40,8 +41,8 @@ namespace HTTP_Client_Asp_Server
             new CommandPair("Protected SHA1", protectedSender.Sha1),
             new CommandPair("Protected SHA256", protectedSender.Sha256),
             new CommandPair("Protected Get PublicKey", protectedSender.GetPublicKey),
-            new CommandPair("Protected Sign", protectedSender.SignMessage),
-            new CommandPair("Protected AddFifty", protectedSender.AddFifty)
+            new CommandPair("Protected Sign", new ProtectedSignMessage(client,sharedUser,serverPublicKey).Process),
+            new CommandPair("Protected AddFifty", new ProtectedAddFifty(client,sharedUser,serverPublicKey).Process),
         };
 
             return commands;
