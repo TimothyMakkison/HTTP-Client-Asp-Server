@@ -7,7 +7,7 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public abstract class BaseSender
     {
-        public HttpClient Client;
+        protected HttpClient Client;
 
         public BaseSender(HttpClient client)
         {
@@ -21,12 +21,12 @@ namespace HTTP_Client_Asp_Server.Senders
             return await result;
         }
 
-        public async virtual Task<string> GetResponseString(HttpResponseMessage response)
+        protected async virtual Task<string> GetResponseString(HttpResponseMessage response)
         {
             return await response.Content.ReadAsStringAsync();
         }
 
-        public virtual HttpContent ToHttpContent(object item)
+        protected virtual HttpContent ToHttpContent(object item)
         {
             var stringContent = Newtonsoft.Json.JsonConvert.SerializeObject(item);
             return new StringContent(stringContent, Encoding.UTF8, "application/json");
