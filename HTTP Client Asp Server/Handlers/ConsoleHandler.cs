@@ -17,14 +17,20 @@ public class ConsoleHandler
         }
     }
 
-    public List<CommandPair> Commands { get; set; } = new List<CommandPair>
+    private List<CommandPair> commands { get; set; } = new List<CommandPair>
     {
         new CommandPair("Exit", line=> Environment.Exit(0)),
     };
 
+    public ConsoleHandler Add(CommandPair commandPair)
+    {
+        commands.Add(commandPair);
+        return this;
+    }
+
     public void ProcessLine(string line)
     {
-        var matchingKeywords = Commands.Where(x => line.StartsWith(x.InputString));
+        var matchingKeywords = commands.Where(x => line.StartsWith(x.InputString));
 
         switch (matchingKeywords.Count())
         {
