@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Handlers;
+using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,22 +8,26 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class AuthenticatedSender : BaseSender
     {
-        public User User { get; set; }
+        public UserHandler UserHandler { get; set; }
 
-        public AuthenticatedSender(HttpClient client, User user) : base(client)
+        public AuthenticatedSender(HttpClient client, UserHandler userHandler) : base(client)
         {
-            User = user;
+            UserHandler = userHandler;
+        }
+
+        protected bool UserCheck()
+        {
+            if (!UserHandler.Assigned)
+            {
+                Console.WriteLine("You need to do a User Post or User Set first");
+                return false;
+            }
+            return true;
         }
 
         protected async virtual Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request)
         {
-            if (!User.Assigned)
-            {
-                Console.WriteLine("You need to do a User Post or User Set first");
-                return null;
-            }
-            request.Headers.Add("ApiKey", User.ApiKey);
-
+            request.Headers.Add("ApiKey", UserHandler.ApiKey);
             return await base.SendAsync(request);
         }
     }

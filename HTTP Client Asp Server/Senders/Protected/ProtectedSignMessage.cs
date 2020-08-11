@@ -11,14 +11,14 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         private CryptoKey ServerPublicKey { get; set; }
 
-        public ProtectedSignMessage(HttpClient client, User user, CryptoKey cryptoKey) : base(client, user)
+        public ProtectedSignMessage(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
         {
             ServerPublicKey = cryptoKey;
         }
 
         public async void Process(string line)
         {
-            if (!HasKey())
+            if (!HasKey() || !UserCheck())
             {
                 return;
             }
@@ -29,12 +29,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             // Hash while waiting for server response
             var hashedValue = Hash(value);
-
             var response = await taskResponse;
-            if (response == null)
-            {
-                return;
-            }
 
             // Convert hex string to byte array;
             var hexadecimal = GetResponseString(response).Result;

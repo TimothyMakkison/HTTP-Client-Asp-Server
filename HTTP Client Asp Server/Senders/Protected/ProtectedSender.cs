@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Handlers;
+using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -9,55 +10,59 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         private CryptoKey ServerPublicKey { get; set; }
 
-        public ProtectedSender(HttpClient client, User user, CryptoKey cryptoKey) : base(client, user)
+        public ProtectedSender(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
         {
             ServerPublicKey = cryptoKey;
         }
 
         public void ProtectedHello(string line)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "protected/hello");
-            var response = SendAuthenticatedAsync(request).Result;
-            if (response == null)
+            if (!UserCheck())
             {
                 return;
             }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "protected/hello");
+            var response = SendAuthenticatedAsync(request).Result;
             Console.WriteLine(GetResponseString(response).Result);
         }
 
         public void Sha1(string line)
         {
+            if (!UserCheck())
+            {
+                return;
+            }
+
             var value = line.Replace("Protected SHA1 ", "");
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha1?message={value}");
             var response = SendAuthenticatedAsync(request).Result;
-            if (response == null)
-            {
-                return;
-            }
             Console.WriteLine(GetResponseString(response).Result);
         }
 
-        public void Sha256(string line)
+        public async void Sha256(string line)
         {
-            var value = line.Replace("Protected SHA256 ", "");
-            var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha256?message={value}");
-            var response = SendAuthenticatedAsync(request).Result;
-            if (response == null)
+            if (!UserCheck())
             {
                 return;
             }
-            Console.WriteLine(GetResponseString(response).Result);
+
+            var value = line.Replace("Protected SHA256 ", "");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha256?message={value}");
+            var response = await SendAuthenticatedAsync(request);
+            Console.WriteLine(await GetResponseString(response));
         }
 
         public async void GetPublicKey(string line)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"protected/getpublickey");
-            var response = await SendAuthenticatedAsync(request);
-
-            if (response == null)
+            if (!UserCheck())
             {
                 return;
             }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"protected/getpublickey");
+            var response = await SendAuthenticatedAsync(request);
+
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine("“Couldn’t Get the Public Key");

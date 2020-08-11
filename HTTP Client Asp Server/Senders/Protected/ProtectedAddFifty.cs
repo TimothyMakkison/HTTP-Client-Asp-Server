@@ -13,7 +13,7 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         private CryptoKey ServerPublicKey { get; set; }
 
-        public ProtectedAddFifty(HttpClient client, User user, CryptoKey cryptoKey) : base(client, user)
+        public ProtectedAddFifty(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
         {
             ServerPublicKey = cryptoKey;
         }
