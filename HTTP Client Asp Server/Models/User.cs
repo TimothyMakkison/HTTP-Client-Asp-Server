@@ -4,6 +4,5 @@
     {
         public string ApiKey { get; set; }
         public string Username { get; set; }
-        public bool Assigned { get; set; }
     }
 }
