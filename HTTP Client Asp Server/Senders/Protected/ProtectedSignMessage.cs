@@ -16,6 +16,7 @@ namespace HTTP_Client_Asp_Server.Senders
             ServerPublicKey = cryptoKey;
         }
 
+        [Command("Protected Sign")]
         public async void Process(string line)
         {
             if (!HasKey() || !UserCheck())

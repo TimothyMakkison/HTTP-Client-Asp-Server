@@ -14,6 +14,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
+        [Command("User Get")]
         public async void GetUser(string line)
         {
             line = line.Replace("User Get ", "");
@@ -24,6 +25,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(product);
         }
 
+        [Command("User Post")]
         public async void NewUser(string line)
         {
             var name = line.Replace("User Post ", "");
@@ -46,6 +48,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Got API Key");
         }
 
+        [Command("User Set")]
         public void UserSet(string line)
         {
             // Input should be in the form "User Set <username> <apikey>"
@@ -61,6 +64,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Stored");
         }
 
+        [Command("User Delete")]
         public async void DeleteUser(string line)
         {
             if (!UserCheck())
@@ -75,6 +79,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(success);
         }
 
+        [Command("User Role")]
         public void ChangeRole(string line)
         {
             line = line.Replace("User Role ", "");

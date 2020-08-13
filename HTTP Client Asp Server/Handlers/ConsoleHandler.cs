@@ -17,20 +17,20 @@ public class ConsoleHandler
         }
     }
 
-    private List<CommandPair> commands { get; set; } = new List<CommandPair>
+    private List<CommandModel> commands { get; set; } = new List<CommandModel>
     {
-        new CommandPair("Exit", line=> Environment.Exit(0)),
+        new CommandModel("Exit", line=> Environment.Exit(0)),
     };
 
-    public ConsoleHandler Add(CommandPair commandPair)
+    public ConsoleHandler AddRange(IEnumerable<CommandModel> commandPairs)
     {
-        commands.Add(commandPair);
+        commands.AddRange(commandPairs);
         return this;
     }
 
     public void ProcessLine(string line)
     {
-        var matchingKeywords = commands.Where(x => line.StartsWith(x.InputString));
+        var matchingKeywords = commands.Where(x => line.StartsWith(x.CommandKey));
 
         switch (matchingKeywords.Count())
         {

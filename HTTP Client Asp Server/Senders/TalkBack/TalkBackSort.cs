@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HTTP_Client_Asp_Server.Handlers;
+using System;
 using System.Linq;
 using System.Net.Http;
 
@@ -10,6 +11,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
+        [Command("TalkBack Sort")]
         public void Process(string line)
         {
             if (!GetParameters(line, out string[] parameters))

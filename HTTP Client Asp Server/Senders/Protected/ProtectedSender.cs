@@ -15,6 +15,8 @@ namespace HTTP_Client_Asp_Server.Senders
             ServerPublicKey = cryptoKey;
         }
 
+
+        [Command("Protected  Hello")]
         public void ProtectedHello(string line)
         {
             if (!UserCheck())
@@ -27,6 +29,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(GetResponseString(response).Result);
         }
 
+        [Command("Protected Sha1")]
         public void Sha1(string line)
         {
             if (!UserCheck())
@@ -40,6 +43,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(GetResponseString(response).Result);
         }
 
+        [Command("Protected Sha256")]
         public async void Sha256(string line)
         {
             if (!UserCheck())
@@ -53,6 +57,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(await GetResponseString(response));
         }
 
+        [Command("Protected Get PublicKey")]
         public async void GetPublicKey(string line)
         {
             if (!UserCheck())

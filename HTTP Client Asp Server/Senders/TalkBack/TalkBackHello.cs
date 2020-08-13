@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HTTP_Client_Asp_Server.Handlers;
+using System;
 using System.Net.Http;
 
 namespace HTTP_Client_Asp_Server.Senders
@@ -9,6 +10,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
+        [Command("TalkBack Hello")]
         public async void Process(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
