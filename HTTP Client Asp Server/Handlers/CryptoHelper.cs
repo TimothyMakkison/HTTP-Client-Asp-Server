@@ -7,24 +7,6 @@ namespace HTTP_Client_Asp_Server.Handlers
 {
     public static class CryptoHelper
     {
-        public static byte[] AesEncrypt(string input, byte[] key, byte[] IV)
-        {
-            using Aes aes = Aes.Create();
-            aes.Key = key;
-            aes.IV = IV;
-
-            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-            using var msEncrypt = new MemoryStream();
-            using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
-            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-            {
-                //Write all data to the stream.
-                swEncrypt.Write(input);
-            }
-            return msEncrypt.ToArray();
-        }
-
         public static byte[] HexToByte(string hex)
         {
             string[] hexCollection = hex.Split("-");

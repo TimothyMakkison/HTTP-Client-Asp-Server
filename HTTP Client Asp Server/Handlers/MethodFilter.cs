@@ -30,7 +30,6 @@ namespace HTTP_Client_Asp_Server.Handlers
         public IEnumerable<CommandModel> ToCommandModel(IEnumerable<(Delegate del, MethodInfo info)> pairs)
         {
             return pairs.Select(x => new CommandModel(x.info.GetCustomAttribute<CommandAttribute>()) { Operation = (Action<string>)x.del });
-
         }
 
         public bool IsMethodCompatibleWithDelegate<T>(MethodInfo method) where T : class
