@@ -96,7 +96,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             var request = new HttpRequestMessage(HttpMethod.Post, "user/changerole")
             {
-                Content = ToHttpContent(new UserRolePair() { username = username, role = role })
+                Content = ToHttpContent(new { username, role })
             };
 
             var response = SendAuthenticatedAsync(request).Result;
