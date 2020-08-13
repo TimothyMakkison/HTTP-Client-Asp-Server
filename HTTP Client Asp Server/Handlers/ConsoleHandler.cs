@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HTTP_Client_Asp_Server.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,7 +36,7 @@ public class ConsoleHandler
         switch (matchingKeywords.Count())
         {
             case 1:
-                matchingKeywords.FirstOrDefault().Operation.Invoke(line);
+                CommandInvoker.Invoke(matchingKeywords.FirstOrDefault(), line);
                 break;
 
             case 0:
@@ -43,10 +44,8 @@ public class ConsoleHandler
                 break;
 
             default:
-                {
-                    Console.WriteLine("Two or more commands match given input, please check commands for conflict");
-                    break;
-                }
+                Console.WriteLine("Two or more commands match given input, please check commands for conflict");
+                break;
         }
     }
 }
