@@ -29,29 +29,27 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(GetResponseString(response).Result);
         }
 
-        [Command("Protected Sha1")]
-        public void Sha1(string line)
+        [Command("Protected Sha1", Parsing = ParseMode.ParseAndTrim)]
+        public void Sha1(string value)
         {
             if (!UserCheck())
             {
                 return;
             }
 
-            var value = line.Replace("Protected SHA1 ", "");
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha1?message={value}");
             var response = SendAuthenticatedAsync(request).Result;
             Console.WriteLine(GetResponseString(response).Result);
         }
 
-        [Command("Protected Sha256")]
-        public async void Sha256(string line)
+        [Command("Protected Sha256", Parsing = ParseMode.ParseAndTrim)]
+        public async void Sha256(string value)
         {
             if (!UserCheck())
             {
                 return;
             }
 
-            var value = line.Replace("Protected SHA256 ", "");
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha256?message={value}");
             var response = await SendAuthenticatedAsync(request);
             Console.WriteLine(await GetResponseString(response));

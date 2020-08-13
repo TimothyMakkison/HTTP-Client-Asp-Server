@@ -14,21 +14,18 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
-        [Command("User Get")]
+        [Command("User Get", Parsing = ParseMode.ParseAndTrim)]
         public async void GetUser(string line)
         {
-            line = line.Replace("User Get ", "");
-
             var request = new HttpRequestMessage(HttpMethod.Get, $"user/new?username={line}");
             var response = await SendAsync(request);
             var product = await GetResponseString(response);
             Console.WriteLine(product);
         }
 
-        [Command("User Post")]
-        public async void NewUser(string line)
+        [Command("User Post", Parsing = ParseMode.ParseAndTrim)]
+        public async void NewUser(string name)
         {
-            var name = line.Replace("User Post ", "");
             var request = new HttpRequestMessage(HttpMethod.Post, "user/new")
             {
                 Content = ToHttpContent(name)
@@ -48,12 +45,11 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Got API Key");
         }
 
-        [Command("User Set")]
+        [Command("User Set", Parsing = ParseMode.ParseAndTrim)]
         public void UserSet(string line)
         {
             // Input should be in the form "User Set <username> <apikey>"
-            var values = line.Replace("User Set ", "");
-            var parts = values.Split(' ');
+            var parts = line.Split(' ');
 
             if (parts.Length <= 1)
             {
@@ -79,10 +75,9 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(success);
         }
 
-        [Command("User Role")]
+        [Command("User Role", Parsing = ParseMode.ParseAndTrim)]
         public void ChangeRole(string line)
         {
-            line = line.Replace("User Role ", "");
             var parts = line.Split(' ');
 
             if (parts.Length <= 1)

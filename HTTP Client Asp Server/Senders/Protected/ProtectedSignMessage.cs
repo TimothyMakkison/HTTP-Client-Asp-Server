@@ -16,15 +16,14 @@ namespace HTTP_Client_Asp_Server.Senders
             ServerPublicKey = cryptoKey;
         }
 
-        [Command("Protected Sign")]
-        public async void Process(string line)
+        [Command("Protected Sign", Parsing = ParseMode.ParseAndTrim)]
+        public async void Process(string value)
         {
             if (!HasKey() || !UserCheck())
             {
                 return;
             }
 
-            var value = line.Replace("Protected Sign ", "");
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sign?message={value}");
             var taskResponse = SendAuthenticatedAsync(request);
 

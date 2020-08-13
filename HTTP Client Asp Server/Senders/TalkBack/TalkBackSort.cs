@@ -11,7 +11,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
-        [Command("TalkBack Sort")]
+        [Command("TalkBack Sort", Parsing =ParseMode.ParseAndTrim)]
         public void Process(string line)
         {
             if (!GetParameters(line, out string[] parameters))
@@ -25,12 +25,11 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(product);
         }
 
-        private bool GetParameters(string line, out string[] parameters)
+        private bool GetParameters(string input, out string[] parameters)
         {
-            // Takes read line of and remove command words
-            var input = line.Replace("TalkBack Sort", "");
-            var inputSpaceless = input.Replace(" ", "");
+            //var inputSpaceless = input.Replace(" ", "");
 
+            var inputSpaceless = input;
             // Check string is in correct form, print error if incorrect
             if (!(inputSpaceless.Contains('[') && inputSpaceless.Contains(']')))
             {

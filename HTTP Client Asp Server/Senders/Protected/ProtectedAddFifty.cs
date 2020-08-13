@@ -19,14 +19,13 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected AddFifty")]
-        public async void Process(string line)
+        public async void Process(string value)
         {
             if (!HasKey())
             {
                 return;
             }
 
-            var value = line.Replace("Protected AddFifty ", string.Empty);
             if (!int.TryParse(value, out int _))
             {
                 Console.WriteLine("A valid integer must be given!");
