@@ -4,7 +4,7 @@
 ]
     public class CommandAttribute : System.Attribute, ICommandData
     {
-        public bool Parsing { get; set; } = false;
+        public ParseMode Parsing { get; set; } = ParseMode.None;
 
         public string CommandKey { get; }
 

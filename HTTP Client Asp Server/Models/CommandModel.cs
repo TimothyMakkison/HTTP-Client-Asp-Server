@@ -17,5 +17,5 @@ public class CommandModel : ICommandData
 
     public string CommandKey { get; set; }
     public Action<string> Operation { get; set; }
-    public bool Parsing { get; set; }
+    public ParseMode Parsing { get; set; }
 }
