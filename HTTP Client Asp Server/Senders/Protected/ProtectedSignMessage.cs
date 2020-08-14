@@ -4,6 +4,7 @@ using System;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -17,7 +18,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected Sign", Parsing = ParseMode.ParseAndTrim)]
-        public async void Process(string value)
+        public async Task Process(string value)
         {
             if (!HasKey() || !UserCheck())
             {

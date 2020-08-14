@@ -3,6 +3,7 @@ using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -15,9 +16,8 @@ namespace HTTP_Client_Asp_Server.Senders
             ServerPublicKey = cryptoKey;
         }
 
-
         [Command("Protected  Hello")]
-        public void ProtectedHello(string line)
+        public async Task ProtectedHello(string line)
         {
             if (!UserCheck())
             {
@@ -30,7 +30,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected Sha1", Parsing = ParseMode.ParseAndTrim)]
-        public void Sha1(string value)
+        public async Task Sha1(string value)
         {
             if (!UserCheck())
             {
@@ -43,7 +43,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected Sha256", Parsing = ParseMode.ParseAndTrim)]
-        public async void Sha256(string value)
+        public async Task Sha256(string value)
         {
             if (!UserCheck())
             {
@@ -56,7 +56,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected Get PublicKey")]
-        public async void GetPublicKey(string line)
+        public async Task GetPublicKey(string line)
         {
             if (!UserCheck())
             {

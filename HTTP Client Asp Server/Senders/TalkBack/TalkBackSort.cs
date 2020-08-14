@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -11,8 +12,8 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
-        [Command("TalkBack Sort", Parsing =ParseMode.ParseAndTrim)]
-        public void Process(string line)
+        [Command("TalkBack Sort", Parsing = ParseMode.ParseAndTrim)]
+        public async Task Process(string line)
         {
             if (!GetParameters(line, out string[] parameters))
                 return;

@@ -12,7 +12,7 @@
                 _ => input,
             };
 
-            command.Operation.Invoke(values);
+            command.Operation.Invoke(values).Wait();
         }
     }
 }

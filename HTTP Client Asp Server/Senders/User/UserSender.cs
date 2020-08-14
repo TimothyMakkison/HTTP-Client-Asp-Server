@@ -1,10 +1,10 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
-using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -15,7 +15,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Get", Parsing = ParseMode.ParseAndTrim)]
-        public async void GetUser(string line)
+        public async Task GetUser(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"user/new?username={line}");
             var response = await SendAsync(request);
@@ -24,7 +24,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Post", Parsing = ParseMode.ParseAndTrim)]
-        public async void NewUser(string name)
+        public async Task NewUser(string name)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "user/new")
             {
@@ -32,7 +32,7 @@ namespace HTTP_Client_Asp_Server.Senders
             };
 
             HttpResponseMessage response = await SendAsync(request);
-            var product = await GetResponseString(response);
+            var product = GetResponseString(response).Result;
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -46,7 +46,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Set", Parsing = ParseMode.ParseAndTrim)]
-        public void UserSet(string line)
+        public async Task UserSet(string line)
         {
             // Input should be in the form "User Set <username> <apikey>"
             var parts = line.Split(' ');
@@ -61,7 +61,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Delete")]
-        public async void DeleteUser(string line)
+        public async Task DeleteUser(string line)
         {
             if (!UserCheck())
             {
@@ -76,7 +76,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Role", Parsing = ParseMode.ParseAndTrim)]
-        public void ChangeRole(string line)
+        public async Task ChangeRole(string line)
         {
             var parts = line.Split(' ');
 

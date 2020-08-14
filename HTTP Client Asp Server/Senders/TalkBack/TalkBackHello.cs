@@ -1,6 +1,7 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -11,7 +12,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("TalkBack Hello")]
-        public async void Process(string line)
+        public async Task Process(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
             HttpResponseMessage response = await SendAsync(request);

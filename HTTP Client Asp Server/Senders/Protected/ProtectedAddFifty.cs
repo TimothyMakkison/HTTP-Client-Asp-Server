@@ -19,7 +19,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected AddFifty")]
-        public async void Process(string value)
+        public async Task Process(string value)
         {
             if (!HasKey())
             {

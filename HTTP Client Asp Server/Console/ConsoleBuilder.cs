@@ -3,6 +3,7 @@ using HTTP_Client_Asp_Server.Senders;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Handlers
 {
@@ -20,13 +21,8 @@ namespace HTTP_Client_Asp_Server.Handlers
 
         public ConsoleHandler BuildConsole()
         {
-            UserHandler userHandler = new UserHandler();
+            var userHandler = new UserHandler();
             var serverKey = new CryptoKey();
-
-            MethodFilter methodFilter = new MethodFilter
-            {
-                Filter = info => info.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0
-            };
 
             var classCollection = new object[]
             {
@@ -38,10 +34,16 @@ namespace HTTP_Client_Asp_Server.Handlers
                 new ProtectedAddFifty(client,userHandler,serverKey),
             };
 
-            var methods = methodFilter.GetValidMethods<Action<string>>(classCollection).ToList();
+            MethodFilter methodFilter = new MethodFilter
+            {
+                Filter = info => info.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0
+            };
+
+            var methods = methodFilter.GetValidMethods<Func<string, Task>>(classCollection);
             var comModel = methodFilter.ToCommandModel(methods);
 
-            return new ConsoleHandler().AddRange(comModel);
+            Console.WriteLine($"Loaded {comModel.Count()} commands.");
+            return new ConsoleHandler(comModel);
         }
     }
 }
