@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Handlers
 {
@@ -9,7 +10,7 @@ namespace HTTP_Client_Asp_Server.Handlers
     {
         public Func<MethodInfo, bool> Filter { get; set; }
 
-        public IEnumerable<(Delegate, MethodInfo)> GetValidMethods<T>(IEnumerable<object> list) where T : class
+        public IEnumerable<T> GetValidMethods<T>(IEnumerable<object> list) where T : class
         {
             var validMethods = list.Where(x => x.GetType().IsClass)
                        .Select(instance => (instance, methods: instance.GetType()
@@ -17,19 +18,16 @@ namespace HTTP_Client_Asp_Server.Handlers
                                                                        .Where(m => Filter.Invoke(m)
                                                                        && IsMethodCompatibleWithDelegate<T>(m))));
 
-            //var validMethodClassPair = validMethods.SelectMany(a => a.methods, (tuple, method) => (tuple.instance, method));
-
-            //return validMethodClassPair.Select(x =>
-            //           new CommandModel(x.method.GetCustomAttribute<CommandAttribute>())
-            //           { Operation = (Action<string>)x.method.CreateDelegate(typeof(Action<string>), x.instance) });
             var validMethodClassPair = validMethods.SelectMany(a => a.methods, (tuple, method) => (tuple.instance, method));
-
-            return validMethodClassPair.Select(x => (x.method.CreateDelegate(typeof(Action<string>), x.instance), x.method));
+            return validMethodClassPair.Select(x => x.method.CreateDelegate(typeof(T), x.instance) as T);
         }
 
-        public IEnumerable<CommandModel> ToCommandModel(IEnumerable<(Delegate del, MethodInfo info)> pairs)
+        public IEnumerable<CommandModel> ToCommandModel(IEnumerable<Func<string, Task>> delegates)
         {
-            return pairs.Select(x => new CommandModel(x.info.GetCustomAttribute<CommandAttribute>()) { Operation = (Action<string>)x.del });
+            return delegates.Select(del => new CommandModel(del.GetMethodInfo().GetCustomAttribute<CommandAttribute>())
+            {
+                Operation = del
+            });
         }
 
         public bool IsMethodCompatibleWithDelegate<T>(MethodInfo method) where T : class
