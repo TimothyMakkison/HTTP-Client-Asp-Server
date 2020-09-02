@@ -30,7 +30,7 @@ namespace HTTP_Client_Asp_Server.Handlers
             });
         }
 
-        public bool IsMethodCompatibleWithDelegate<T>(MethodInfo method) where T : class
+        private bool IsMethodCompatibleWithDelegate<T>(MethodInfo method) where T : class
         {
             Type delegateType = typeof(T);
             MethodInfo delegateSignature = delegateType.GetMethod("Invoke");

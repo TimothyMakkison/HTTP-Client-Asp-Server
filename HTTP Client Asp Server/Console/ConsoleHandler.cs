@@ -2,9 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class ConsoleHandler
 {
+    public ConsoleHandler(IEnumerable<CommandModel> commands)
+    {
+        this.commands.AddRange(commands);
+    }
+
     public void Run()
     {
         Console.WriteLine("Hello. What would you like to do?");
@@ -20,13 +26,12 @@ public class ConsoleHandler
 
     private List<CommandModel> commands { get; set; } = new List<CommandModel>
     {
-        new CommandModel("Exit", line=> Environment.Exit(0)),
+        new CommandModel("Exit", line=> Quit(line)),
     };
 
-    public ConsoleHandler AddRange(IEnumerable<CommandModel> commandPairs)
+    private static async Task Quit(string line)
     {
-        commands.AddRange(commandPairs);
-        return this;
+        Environment.Exit(0);
     }
 
     public void ProcessLine(string line)
