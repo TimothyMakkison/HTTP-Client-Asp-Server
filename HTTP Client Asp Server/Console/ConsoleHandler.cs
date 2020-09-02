@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 public class ConsoleHandler
 {
@@ -26,13 +25,8 @@ public class ConsoleHandler
 
     private List<CommandModel> commands { get; set; } = new List<CommandModel>
     {
-        new CommandModel("Exit", line=> Quit(line)),
+        new CommandModel("Exit", async line => Environment.Exit(0)),
     };
-
-    private static async Task Quit(string line)
-    {
-        Environment.Exit(0);
-    }
 
     public void ProcessLine(string line)
     {
