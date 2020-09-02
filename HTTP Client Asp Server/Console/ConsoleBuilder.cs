@@ -43,13 +43,11 @@ namespace HTTP_Client_Asp_Server.Handlers
             //TODO Search assembly and extract methods
             // Search assembly for valid methods/ classes, construct classes via container,
             // then extract valid funcs
-            CommandAttributeMethodFilter methodFilter = new CommandAttributeMethodFilter();
+            BaseFilter methodFilter = new CommandAttributeMethodFilter();
             var methods = methodFilter.GetValidMethods<Func<string, Task>>(classCollection);
 
-            var commandModels = methods.Select(del => new CommandModel(del.GetMethodInfo().GetCustomAttribute<CommandAttribute>())
-            {
-                Operation = del
-            });
+            var commandModels = methods.Select(del 
+                => new CommandModel(del.GetMethodInfo().GetCustomAttribute<CommandAttribute>(), del));
             return new ConsoleHandler(commandModels);
         }
     }

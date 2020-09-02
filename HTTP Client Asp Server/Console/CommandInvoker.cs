@@ -4,11 +4,11 @@
     {
         public static void Invoke(CommandModel command, string input)
         {
-            string values = command.Parsing switch
+            string values = command.Data.Parsing switch
             {
                 ParseMode.None => input,
-                ParseMode.Parse => input.Replace(command.CommandKey, ""),
-                ParseMode.ParseAndTrim => input.Replace(command.CommandKey, "").Trim(' '),
+                ParseMode.Parse => input.Replace(command.Data.CommandKey, ""),
+                ParseMode.ParseAndTrim => input.Replace(command.Data.CommandKey, "").Trim(' '),
                 _ => input,
             };
 

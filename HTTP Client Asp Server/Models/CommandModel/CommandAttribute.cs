@@ -1,16 +1,20 @@
-﻿namespace HTTP_Client_Asp_Server.Handlers
+﻿using System;
+
+namespace HTTP_Client_Asp_Server.Handlers
 {
-    [System.AttributeUsage(System.AttributeTargets.Method)
-]
-    public class CommandAttribute : System.Attribute, ICommandData
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CommandAttribute : Attribute, ICommandData
     {
         public ParseMode Parsing { get; set; } = ParseMode.None;
 
         public string CommandKey { get; }
 
-        public CommandAttribute(string command)
+        public CommandAttribute(string commandKey)
         {
-            this.CommandKey = command;
+            if (commandKey == null || commandKey == "")
+                throw new ArgumentNullException(nameof(commandKey));
+
+            CommandKey = commandKey;
         }
     }
 }

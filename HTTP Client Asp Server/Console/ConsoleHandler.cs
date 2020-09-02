@@ -1,4 +1,5 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
+using HTTP_Client_Asp_Server.Models.CommandModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +26,12 @@ public class ConsoleHandler
 
     private List<CommandModel> commands { get; set; } = new List<CommandModel>
     {
-        new CommandModel("Exit", async line => Environment.Exit(0)),
+        new CommandModel(new CommandData(){CommandKey = "Exit" }, async line => Environment.Exit(0)),
     };
 
     public void ProcessLine(string line)
     {
-        var matchingKeywords = commands.Where(x => line.StartsWith(x.CommandKey));
+        var matchingKeywords = commands.Where(x => line.StartsWith(x.Data.CommandKey));
 
         switch (matchingKeywords.Count())
         {

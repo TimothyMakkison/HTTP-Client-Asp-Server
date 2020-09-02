@@ -2,21 +2,13 @@
 using System;
 using System.Threading.Tasks;
 
-public class CommandModel : ICommandData
+public class CommandModel
 {
-    public CommandModel(ICommandData data)
+    public CommandModel(ICommandData commandData, Func<string, Task> operation)
     {
-        CommandKey = data.CommandKey;
-        Parsing = data.Parsing;
-    }
-
-    public CommandModel(string inputString, Func<string, Task> operation)
-    {
-        CommandKey = inputString != null && inputString != "" ? inputString : throw new ArgumentNullException();
         Operation = operation;
+        Data = commandData;
     }
-
-    public string CommandKey { get; set; }
+    public ICommandData Data { get; private set; }
     public Func<string, Task> Operation { get; set; }
-    public ParseMode Parsing { get; set; }
 }
