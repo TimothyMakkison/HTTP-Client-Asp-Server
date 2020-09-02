@@ -26,11 +26,10 @@ namespace HTTP_Client_Asp_Server.Senders
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sign?message={value}");
-            var taskResponse = SendAuthenticatedAsync(request);
+            var response = await SendAuthenticatedAsync(request);
 
             // Hash while waiting for server response
             var hashedValue = Hash(value);
-            var response = await taskResponse;
 
             // Convert hex string to byte array;
             var hexadecimal = GetResponseString(response).Result;
@@ -44,7 +43,7 @@ namespace HTTP_Client_Asp_Server.Senders
         private bool VerifyHash(byte[] hash, byte[] signature)
         {
             using var rsa = new RSACryptoServiceProvider();
-            rsa.FromXmlString(ServerPublicKey.Key);
+            rsa.FromXmlString(ServerPublicKey.Value);
             return rsa.VerifyHash(hash, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
         }
 
@@ -57,7 +56,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
         private bool HasKey()
         {
-            if (ServerPublicKey.HasKey)
+            if (ServerPublicKey.Assigned)
                 return true;
 
             Console.WriteLine("Client doesn’t yet have the public key");

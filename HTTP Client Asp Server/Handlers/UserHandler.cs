@@ -2,15 +2,20 @@
 
 namespace HTTP_Client_Asp_Server.Handlers
 {
-    public class UserHandler : User
+    /// <summary>
+    /// Responsible for determining if User has had its values assigned.
+    /// </summary>
+    public class UserHandler : IAssignable<User>
     {
-        public void SetValues(string username, string apiKey)
+        public bool Assigned { get; private set; } = false;
+
+        public IAssignable<User> Set(User value)
         {
-            ApiKey = apiKey;
-            Username = username;
+            Value = value;
             Assigned = true;
+            return this;
         }
 
-        public bool Assigned { get; set; } = false;
+        public User Value { get; private set; }
     }
 }

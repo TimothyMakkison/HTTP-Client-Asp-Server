@@ -26,7 +26,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
         protected async virtual Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request)
         {
-            request.Headers.Add("ApiKey", UserHandler.ApiKey);
+            request.Headers.Add("ApiKey", UserHandler.Value.ApiKey);
             return await base.SendAsync(request);
         }
     }

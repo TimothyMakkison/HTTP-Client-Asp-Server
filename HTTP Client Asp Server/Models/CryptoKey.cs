@@ -1,8 +1,16 @@
 ﻿namespace HTTP_Client_Asp_Server.Models
 {
-    public class CryptoKey
+    public class CryptoKey : IAssignable<string>
     {
-        public string Key { get; set; }
-        public bool HasKey => Key != null && Key != string.Empty;
+        public bool Assigned { get; private set; }
+
+        public string Value { get; private set; }
+
+        public IAssignable<string> Set(string value)
+        {
+            Value = value;
+            Assigned = true;
+            return this;
+        }
     }
 }

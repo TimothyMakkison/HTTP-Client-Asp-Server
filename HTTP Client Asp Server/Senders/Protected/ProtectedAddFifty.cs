@@ -49,7 +49,7 @@ namespace HTTP_Client_Asp_Server.Senders
         private HttpRequestMessage GenerateWebRequest(string value, Aes Aes)
         {
             using var rsa = new RSACryptoServiceProvider();
-            rsa.FromXmlString(ServerPublicKey.Key);
+            rsa.FromXmlString(ServerPublicKey.Value);
 
             // Convert value to bytes then
             byte[] valueBytes = Encoding.UTF8.GetBytes(value);
@@ -76,7 +76,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
         private bool HasKey()
         {
-            if (ServerPublicKey.HasKey)
+            if (ServerPublicKey.Assigned)
                 return true;
 
             Console.WriteLine("Client doesn’t yet have the public key");

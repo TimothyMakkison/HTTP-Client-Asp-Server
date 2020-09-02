@@ -16,7 +16,7 @@ namespace HTTP_Client_Asp_Server.Senders
             ServerPublicKey = cryptoKey;
         }
 
-        [Command("Protected  Hello")]
+        [Command("Protected Hello")]
         public async Task ProtectedHello(string line)
         {
             if (!UserCheck())
@@ -74,7 +74,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             var content = await GetResponseString(response);
             Console.WriteLine("Got Public Key");
-            ServerPublicKey.Key = content;
+            ServerPublicKey.Set(content);
         }
     }
 }

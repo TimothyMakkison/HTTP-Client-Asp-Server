@@ -1,4 +1,5 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
+using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -41,7 +42,8 @@ namespace HTTP_Client_Asp_Server.Senders
             }
 
             var jObject = JObject.Parse(product);
-            UserHandler.SetValues(jObject["userName"].Value<string>(), jObject["apiKey"].Value<string>());
+            var user = new User() { Username = jObject["userName"].Value<string>(), ApiKey = jObject["apiKey"].Value<string>() };
+            UserHandler.Set(user);
             Console.WriteLine("Got API Key");
         }
 
@@ -56,7 +58,9 @@ namespace HTTP_Client_Asp_Server.Senders
                 Console.WriteLine("Invalid input, must contain a valid username and Guid");
                 return;
             }
-            UserHandler.SetValues(string.Join(" ", parts.Take(parts.Length - 1)), parts.LastOrDefault());
+
+            var user = new User() { Username = string.Join(" ", parts.Take(parts.Length - 1)), ApiKey = parts.LastOrDefault() };
+            UserHandler.Set(user);
             Console.WriteLine("Stored");
         }
 
@@ -68,7 +72,7 @@ namespace HTTP_Client_Asp_Server.Senders
                 return;
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={UserHandler.Username}");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={UserHandler.Value.Username}");
             var response = await SendAuthenticatedAsync(request);
             var product = await GetResponseString(response);
             var success = Convert.ToBoolean(product);
