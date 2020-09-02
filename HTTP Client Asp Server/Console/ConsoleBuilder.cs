@@ -1,8 +1,11 @@
 ﻿using HTTP_Client_Asp_Server.Models;
 using HTTP_Client_Asp_Server.Senders;
+using StructureMap;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Handlers
@@ -21,19 +24,26 @@ namespace HTTP_Client_Asp_Server.Handlers
 
         public ConsoleHandler BuildConsole()
         {
-            var userHandler = new UserHandler();
-            var serverKey = new CryptoKey();
+            var container = new Container(_ =>
+            {
+                _.ForSingletonOf<HttpClient>().Use(client);
+                _.ForSingletonOf<UserHandler>();
+                _.ForSingletonOf<CryptoKey>();
+            });
 
             var classCollection = new object[]
             {
-                new TalkBackHello(client),
-                new TalkBackSort(client),
-                new UserSender(client,userHandler),
-                new ProtectedSender(client, userHandler, serverKey),
-                new ProtectedSignMessage(client,userHandler,serverKey),
-                new ProtectedAddFifty(client,userHandler,serverKey),
+                container.GetInstance<TalkBackHello>(),
+                container.GetInstance<TalkBackSort>(),
+                container.GetInstance<UserSender>(),
+                container.GetInstance<ProtectedSender>(),
+                container.GetInstance<ProtectedSignMessage>(),
+                container.GetInstance<ProtectedAddFifty>(),
             };
 
+            //TODO Search assembly and extract methods
+            // Search assembly for valid methods/ classes, construct classes via container, 
+            // then extract valid funcs
             MethodFilter methodFilter = new MethodFilter
             {
                 Filter = info => info.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0
@@ -41,8 +51,6 @@ namespace HTTP_Client_Asp_Server.Handlers
 
             var methods = methodFilter.GetValidMethods<Func<string, Task>>(classCollection);
             var comModel = methodFilter.ToCommandModel(methods);
-
-            Console.WriteLine($"Loaded {comModel.Count()} commands.");
             return new ConsoleHandler(comModel);
         }
     }
