@@ -30,24 +30,20 @@ namespace HTTP_Client_Asp_Server.Handlers
                 _.ForSingletonOf<CryptoKey>();
             });
 
-            var classCollection = new object[]
-            {
-                container.GetInstance<TalkBackHello>(),
-                container.GetInstance<TalkBackSort>(),
-                container.GetInstance<UserSender>(),
-                container.GetInstance<ProtectedSender>(),
-                container.GetInstance<ProtectedSignMessage>(),
-                container.GetInstance<ProtectedAddFifty>(),
-            };
+            //Search assembly for classes that contain methods with chosen attribute
+            var valid = Assembly.GetExecutingAssembly()
+                                .GetExportedTypes()
+                                .Where(x => x.IsClass)
+                                .Where(inst => inst.GetMethods()
+                                                   .Any(m => m.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0));
 
-            //TODO Search assembly and extract methods
-            // Search assembly for valid methods/ classes, construct classes via container,
-            // then extract valid funcs
+            //Take valid class types and create concrete instances.
+            var classCollection = valid.Select(container.GetInstance);
+
             BaseFilter methodFilter = new CommandAttributeMethodFilter();
             var methods = methodFilter.GetValidMethods<Func<string, Task>>(classCollection);
 
-            var commandModels = methods.Select(del 
-                => new CommandModel(del.GetMethodInfo().GetCustomAttribute<CommandAttribute>(), del));
+            var commandModels = methods.Select(func => new CommandModel(func.GetMethodInfo().GetCustomAttribute<CommandAttribute>(), func));
             return new ConsoleHandler(commandModels);
         }
     }

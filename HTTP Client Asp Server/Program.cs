@@ -12,3 +12,10 @@ namespace HTTP_Client_Asp_Server
         }
     }
 }
+//TODO Separate input loop into a different method
+
+//TODO Add parsing logic into command interpreter
+
+//TODO Remove any additional info from command attribute aside from command word
+
+//TODO Move all command construction and searching into separate class
