@@ -1,14 +1,17 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using System;
-using System.Threading.Tasks;
 
-public class CommandModel
+namespace HTTP_Client_Asp_Server.Models.CommandModel
 {
-    public CommandModel(ICommandData commandData, Func<string, Task> operation)
+    public class CommandModel
     {
-        Operation = operation;
-        Data = commandData;
+        public CommandModel(ICommandData commandData, Delegate operation)
+        {
+            Operation = operation;
+            Data = commandData;
+        }
+
+        public ICommandData Data { get; private set; }
+        public Delegate Operation { get; set; }
     }
-    public ICommandData Data { get; private set; }
-    public Func<string, Task> Operation { get; set; }
 }
