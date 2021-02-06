@@ -47,6 +47,12 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Got API Key");
         }
 
+        [Command("Hey")]
+        public void Hey()
+        {
+            Console.WriteLine("Hey hey people");
+        }
+
         [Command("User Set")]
         public async Task UserSet(string line)
         {

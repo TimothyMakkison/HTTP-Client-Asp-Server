@@ -1,6 +1,6 @@
 ﻿using CSharpx;
 using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models.CommandModel;
+using HTTP_Client_Asp_Server.Models;
 using RailwaySharp;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,6 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
                                     pair.Item1.TargetType == TargetType.Scalar,
                                     CultureInfo.InvariantCulture,
                                     true));
-
 
             var vals = outVal.Select(x => x.FromJust());
 

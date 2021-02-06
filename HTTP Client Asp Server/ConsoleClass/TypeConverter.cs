@@ -13,45 +13,6 @@ using System.Reflection;
 /// </summary>
 namespace HTTP_Client_Asp_Server.ConsoleClass
 {
-    //public static class TypeConverter
-    //{
-    //    public static object ChangeType(IEnumerable<string> values, Type conversionType, bool scalar, CultureInfo conversionCulture)
-    //    {
-    //        return scalar
-    //            ? ConvertString(values.SingleOrDefault(), conversionType, conversionCulture)
-    //            : ChangeTypeSequence(values, conversionType, conversionCulture);
-    //    }
-
-    //    private static object ChangeTypeSequence(IEnumerable<string> values, Type conversionType, CultureInfo conversionCulture)
-    //    {
-    //        var type =
-    //            conversionType.GetTypeInfo()
-    //                          .GetGenericArguments()
-    //                          .SingleOrDefault()
-    //                          ?? throw new
-    //                          InvalidOperationException("Non scalar properties should be sequence of type IEnumerable<T>.");
-
-    //        var converted = values.Select(value => ConvertString(value, type, conversionCulture));
-
-    //        //return converted.Any(a => a == null
-    //        //    ? null
-    //        //    : converted.Select(c => ((Just<object>)c).Value).ToUntypedArray(type);
-    //        return converted;
-    //    }
-    //    private static object ConvertString(string value, Type type, CultureInfo conversionCulture)
-    //    {
-    //        try
-    //        {
-    //            return Convert.ChangeType(value, type, conversionCulture);
-    //        }
-    //        catch
-    //        {
-    //            //return default(type);
-    //            // Required for converting from string to TimeSpan because Convert.ChangeType can't
-    //            return System.ComponentModel.TypeDescriptor.GetConverter(type).ConvertFrom(null, conversionCulture, value);
-    //        }
-    //    }
-    //}
     public static class TypeConverter
     {
         public static Maybe<object> ChangeType(IEnumerable<string> values, Type conversionType, bool scalar, CultureInfo conversionCulture, bool ignoreValueCase)
@@ -75,7 +36,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
             var converted = values.Select(value => ChangeTypeScalar(value, type, conversionCulture, ignoreValueCase))
                                   .ToArray();
 
-            var a= converted.Any(a => a.MatchNothing())
+            var a = converted.Any(a => a.MatchNothing())
                 ? Maybe.Nothing<object>()
                 : Maybe.Just(converted.Select(c => ((Just<object>)c).Value).ToUntypedArray(type));
             return a;

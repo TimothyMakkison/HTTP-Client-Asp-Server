@@ -1,7 +1,6 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
-using System;
+﻿using System;
 
-namespace HTTP_Client_Asp_Server.Models.CommandModel
+namespace HTTP_Client_Asp_Server.Models
 {
     public class CommandModel
     {

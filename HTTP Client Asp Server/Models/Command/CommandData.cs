@@ -1,6 +1,4 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
-
-namespace HTTP_Client_Asp_Server.Models.CommandModel
+﻿namespace HTTP_Client_Asp_Server.Models
 {
     public class CommandData : ICommandData
     {

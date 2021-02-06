@@ -1,13 +1,11 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using HTTP_Client_Asp_Server.Models;
-using HTTP_Client_Asp_Server.Models.CommandModel;
 using StructureMap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.ConsoleClass
 {

@@ -1,4 +1,4 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
 using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Net;
@@ -70,7 +70,7 @@ namespace HTTP_Client_Asp_Server.Senders
         private async Task<string> Decrypt(HttpResponseMessage response, Aes aes)
         {
             var encryptedHex = await GetResponseString(response);
-            var encryptedBytes = CryptoHelper.HexToByte(encryptedHex);
+            var encryptedBytes = encryptedHex.HexToByte();
             return CryptoHelper.AesDecrypt(encryptedBytes, aes.Key, aes.IV);
         }
 
