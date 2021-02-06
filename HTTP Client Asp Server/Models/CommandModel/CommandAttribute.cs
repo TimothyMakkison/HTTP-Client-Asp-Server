@@ -6,8 +6,6 @@ namespace HTTP_Client_Asp_Server.Handlers
     [AttributeUsage(AttributeTargets.Method)]
     public class CommandAttribute : Attribute, ICommandData
     {
-        public ParseMode Parsing { get; set; } = ParseMode.None;
-
         public string CommandKey { get; }
 
         public CommandAttribute(string commandKey)

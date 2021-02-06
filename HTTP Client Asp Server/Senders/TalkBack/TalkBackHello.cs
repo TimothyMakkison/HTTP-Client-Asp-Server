@@ -12,7 +12,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("TalkBack Hello")]
-        public async Task Process(string line)
+        public async Task Hello()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
             HttpResponseMessage response = await SendAsync(request);

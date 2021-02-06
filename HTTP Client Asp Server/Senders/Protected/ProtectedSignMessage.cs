@@ -1,5 +1,6 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using HTTP_Client_Asp_Server.Models;
+using HTTP_Client_Asp_Server.Models.CommandModel;
 using System;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -17,7 +18,7 @@ namespace HTTP_Client_Asp_Server.Senders
             ServerPublicKey = cryptoKey;
         }
 
-        [Command("Protected Sign", Parsing = ParseMode.ParseAndTrim)]
+        [Command("Protected Sign")]
         public async Task Process(string value)
         {
             if (!HasKey() || !UserCheck())
@@ -47,7 +48,7 @@ namespace HTTP_Client_Asp_Server.Senders
             return rsa.VerifyHash(hash, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
         }
 
-        private byte[] Hash(string value)
+        private static byte[] Hash(string value)
         {
             var plaintextBytes = Encoding.UTF8.GetBytes(value);
             using var hashAlgorithm = new SHA1Managed();

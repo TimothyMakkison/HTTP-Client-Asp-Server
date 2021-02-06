@@ -1,5 +1,6 @@
 ﻿using HTTP_Client_Asp_Server.Handlers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,11 +13,9 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
-        [Command("TalkBack Sort", Parsing = ParseMode.ParseAndTrim)]
-        public async Task Process(string line)
+        [Command("TalkBack Sort")]
+        public async Task Process(IEnumerable<int> parameters)
         {
-            if (!GetParameters(line, out string[] parameters))
-                return;
             string uri = BuildQuery(parameters);
 
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -43,14 +42,11 @@ namespace HTTP_Client_Asp_Server.Senders
             return true;
         }
 
-        private string BuildQuery(string[] parameters)
+        private static string BuildQuery(IEnumerable<int> parameters)
         {
             string uri = "talkback/sort";
-            if (!(parameters.Length == 1 && parameters.First() == ""))
-            {
-                var namedValues = parameters.Select(x => $"integers={x}");
-                uri += "?" + string.Join('&', namedValues);
-            }
+            var namedValues = parameters.Select(x => $"integers={x}");
+            uri += "?" + string.Join('&', namedValues);
             return uri;
         }
     }

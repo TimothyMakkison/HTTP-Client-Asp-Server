@@ -29,7 +29,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(GetResponseString(response).Result);
         }
 
-        [Command("Protected Sha1", Parsing = ParseMode.ParseAndTrim)]
+        [Command("Protected Sha1")]
         public async Task Sha1(string value)
         {
             if (!UserCheck())
@@ -42,7 +42,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(GetResponseString(response).Result);
         }
 
-        [Command("Protected Sha256", Parsing = ParseMode.ParseAndTrim)]
+        [Command("Protected Sha256")]
         public async Task Sha256(string value)
         {
             if (!UserCheck())

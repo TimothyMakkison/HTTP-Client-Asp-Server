@@ -15,7 +15,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
         }
 
-        [Command("User Get", Parsing = ParseMode.ParseAndTrim)]
+        [Command("User Get")]
         public async Task GetUser(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"user/new?username={line}");
@@ -24,7 +24,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(product);
         }
 
-        [Command("User Post", Parsing = ParseMode.ParseAndTrim)]
+        [Command("User Post")]
         public async Task NewUser(string name)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "user/new")
@@ -47,7 +47,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Got API Key");
         }
 
-        [Command("User Set", Parsing = ParseMode.ParseAndTrim)]
+        [Command("User Set")]
         public async Task UserSet(string line)
         {
             // Input should be in the form "User Set <username> <apikey>"
@@ -65,7 +65,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Delete")]
-        public async Task DeleteUser(string line)
+        public async Task DeleteUser()
         {
             if (!UserCheck())
             {
@@ -79,7 +79,7 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(success);
         }
 
-        [Command("User Role", Parsing = ParseMode.ParseAndTrim)]
+        [Command("User Role")]
         public async Task ChangeRole(string line)
         {
             var parts = line.Split(' ');
