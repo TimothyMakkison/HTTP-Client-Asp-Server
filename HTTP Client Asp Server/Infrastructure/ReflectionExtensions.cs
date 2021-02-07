@@ -1,6 +1,7 @@
 ﻿using HTTP_Client_Asp_Server.ConsoleClass;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -9,10 +10,26 @@ namespace HTTP_Client_Asp_Server.Infrastructure
 {
     public static class ReflectionExtensions
     {
+        public static IEnumerable<Delegate> BuildValidMethods(this IEnumerable<object> classInstances, Func<MethodInfo, bool> filter)
+        {
+            //Filter for classes, then iterate through methods, selecting methods that take the same arguments and return type as T
+            IEnumerable<(object instance, IEnumerable<MethodInfo> methods)> validMethods = classInstances.Where(x => x.GetType().IsClass)
+                       .Select(instance => (instance, methods: instance.GetType()
+                                                                       .GetMethods()
+                                                                       .Where(filter)));
+
+            // Flatten into class instance, methodinfo pairing.
+            var validMethodClassPair = validMethods.SelectMany(a => a.methods, (tuple, method) => (tuple.instance, method));
+
+            // Convert into a func of type T.
+            return validMethodClassPair.Select(x => x.method.CreateDelegate(x.instance));
+        }
         public static bool HasAttribute<T>(this MethodInfo methodInfo) where T : Attribute
         {
             return methodInfo.GetCustomAttributes(typeof(T), false).Length > 0;
         }
+
+        //TODO Remove HasReturnType
 
         /// <summary>
         /// Compares a method info and Delegate returning true if they match.
@@ -20,7 +37,7 @@ namespace HTTP_Client_Asp_Server.Infrastructure
         /// <typeparam name="T">Delegate type.</typeparam>
         /// <param name="methodInfo">MethodInfo</param>
         /// <returns>Bool determining if the T and methodInfo match.</returns>
-        public static bool HasReturnType<T>(this MethodInfo methodInfo, Type returnType) where T : class
+        public static bool HasReturnType<T>(this MethodInfo methodInfo) where T : class
         {
             Type delegateType = typeof(T);
             MethodInfo delegateSignature = delegateType.GetMethod("Invoke");

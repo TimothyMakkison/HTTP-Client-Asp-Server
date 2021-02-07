@@ -1,4 +1,4 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
 using HTTP_Client_Asp_Server.Models;
 using StructureMap;
 using System;
@@ -40,7 +40,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
             //Take valid class types and create concrete instances.
             var classInstances = valid.Select(container.GetInstance);
 
-            var methods = classInstances.BuildValidMethods();
+            var methods = classInstances.BuildValidMethods(m => m.HasAttribute<CommandAttribute>());
 
             return methods.Select(func => new CommandModel(func.GetMethodInfo().GetCustomAttribute<CommandAttribute>(), func));
         }
