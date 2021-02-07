@@ -25,21 +25,6 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(product);
         }
 
-        private static bool GetParameters(string input, out string[] parameters)
-        {
-            var inputSpaceless = input;
-            // Check string is in correct form, print error if incorrect
-            if (!(inputSpaceless.Contains('[') && inputSpaceless.Contains(']')))
-            {
-                parameters = null;
-                Console.WriteLine("Invalid array form.");
-                return false;
-            }
-            var parameterString = inputSpaceless.Replace("[", string.Empty).Replace("]", string.Empty);
-            parameters = parameterString.Split(',');
-            return true;
-        }
-
         private static string BuildQuery(IEnumerable<int> parameters)
         {
             string uri = "talkback/sort";
