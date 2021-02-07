@@ -1,5 +1,4 @@
-﻿using HTTP_Client_Asp_Server.Handlers;
-using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -47,14 +46,8 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine("Got API Key");
         }
 
-        [Command("Hey")]
-        public void Hey()
-        {
-            Console.WriteLine("Hey hey people");
-        }
-
         [Command("User Set")]
-        public async Task UserSet(string line)
+        public void UserSet(string line)
         {
             // Input should be in the form "User Set <username> <apikey>"
             var parts = line.Split(' ');
@@ -86,7 +79,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Role")]
-        public async Task ChangeRole(string line)
+        public void ChangeRole(string line)
         {
             var parts = line.Split(' ');
 

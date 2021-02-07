@@ -14,7 +14,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("TalkBack Sort")]
-        public async Task Process(IEnumerable<int> parameters)
+        public void Process(IEnumerable<int> parameters)
         {
             string uri = BuildQuery(parameters);
 
@@ -25,10 +25,8 @@ namespace HTTP_Client_Asp_Server.Senders
             Console.WriteLine(product);
         }
 
-        private bool GetParameters(string input, out string[] parameters)
+        private static bool GetParameters(string input, out string[] parameters)
         {
-            //var inputSpaceless = input.Replace(" ", "");
-
             var inputSpaceless = input;
             // Check string is in correct form, print error if incorrect
             if (!(inputSpaceless.Contains('[') && inputSpaceless.Contains(']')))
