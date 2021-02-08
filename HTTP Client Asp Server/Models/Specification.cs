@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace HTTP_Client_Asp_Server.ConsoleClass
+namespace HTTP_Client_Asp_Server.Models
 {
     public enum TargetType
     {
@@ -25,8 +25,6 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
         public Type ConversionType => conversionType;
 
         public TargetType TargetType => targetType;
-
-        //public ParameterInfo PropertyInfo => propertyInfo;
 
         public static Specification FromPropertyInfo(ParameterInfo info)
         {
