@@ -1,10 +1,8 @@
 ﻿using CSharpx;
 using HTTP_Client_Asp_Server.Models;
 using RailwaySharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.ConsoleClass
 {
@@ -25,18 +23,9 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
                             .Map(
                 command => CommandParser.Parse(input,
                                                command).Either(
-                    (parameters, _) => (object)Invoke(command.Operation, parameters.ToArray()),
+                    (parameters, _) => command.Operation.Invoke(parameters.ToArray()),
                     e => string.Join('\n', e)),
                 () => "Not a command.");
-        }
-
-        private static string Invoke(Delegate delgate, object[] parameters)
-        {
-            // Invoke command and wait if it returns a task value.
-            var returnValue = delgate.DynamicInvoke(parameters);
-            if (returnValue is Task) (returnValue as Task).Wait();
-
-            return "";
         }
     }
 }
