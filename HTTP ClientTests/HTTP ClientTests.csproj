@@ -18,4 +18,8 @@
     <ProjectReference Include="..\HTTP Client Asp Server\HTTP Client.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Senders\" />
+  </ItemGroup>
+
 </Project>

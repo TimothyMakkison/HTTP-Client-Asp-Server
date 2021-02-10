@@ -23,8 +23,9 @@ namespace Net_Core_Server.Controllers
         [HttpGet("new")]
         public async Task<ActionResult<string>> GetUser([FromQuery] string username)
         {
-            string output = await dataAccess.ContainsUsername(username) ? "True - User Does Exist!" : "False - User Does Not Exist!"
-                                                                   + " Did you mean to do a POST to create a new user?";
+            string output = await dataAccess.ContainsUsername(username)
+                ? "True - User Does Exist!"
+                : "False - User Does Not Exist! Did you mean to do a POST to create a new user?";
             return Ok(output);
         }
 
@@ -68,19 +69,13 @@ namespace Net_Core_Server.Controllers
             string username = jObject["username"].Value<string>();
             string role = jObject["role"].Value<string>();
 
-            if (!(role == Role.Admin || role == Role.User))
+            if (role == Role.Admin || role == Role.User)
             {
-                return BadRequest("NOT DONE: Role does not exist");
+                return await dataAccess.ChangeRole(username, role)
+                    ? Ok("DONE")
+                    : (ActionResult<string>)BadRequest("NOT DONE: Username does not exist");
             }
-            if (await dataAccess.ChangeRole(username, role))
-            {
-                return Ok("DONE");
-            }
-            else
-            {
-                return BadRequest("NOT DONE: Username does not exist");
-            }
-            return BadRequest("NOT DONE: An error occured");
+            return BadRequest("NOT DONE: Role does not exist");
         }
     }
 }

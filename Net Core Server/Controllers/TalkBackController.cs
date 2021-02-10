@@ -13,6 +13,8 @@ namespace Net_Core_Server.Controllers
 
         [HttpGet("sort")]
         public ActionResult<int[]> GetSort([FromQuery] List<int> integers)
-            => integers == null ? BadRequest($"Please input parameters") : (ActionResult<int[]>)Ok(integers.OrderBy(x => x));
+            => integers == null
+            ? BadRequest($"Please input parameters")
+            : (ActionResult<int[]>)Ok(integers.OrderBy(x => x));
     }
 }

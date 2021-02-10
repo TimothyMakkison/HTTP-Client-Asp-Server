@@ -31,7 +31,8 @@ namespace HTTP_Client_Asp_Server.ConsoleClass.Tests
 
             var output = TypeConverter.ChangeType(args, type, false, CultureInfo.InvariantCulture, false);
 
-            output.Match(val => Enumerable.SequenceEqual((IEnumerable<int>)val, values), () => Assert.Fail());
+            output.Match(val => Assert.IsTrue(Enumerable.SequenceEqual((IEnumerable<int>)val, values))
+            , () => Assert.Fail());
         }
     }
 }

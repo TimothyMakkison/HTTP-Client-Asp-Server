@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 
@@ -26,9 +25,5 @@ namespace Net_Core_Server.Filters
             var role = claims.FindFirstValue(ClaimTypes.Role);
             return condition.Contains(role);
         }
-    }
-
-    public class TestFilter : AuthorizeAttribute
-    {
     }
 }

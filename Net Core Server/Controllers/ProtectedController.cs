@@ -39,11 +39,9 @@ namespace Net_Core_Server.Controllers
         [HttpGet("sha256")]
         public ActionResult<string> GetSha256([FromQuery] string message)
         {
-            if (message == null)
-            {
-                return BadRequest("Bad Request");
-            }
-            return Ok(CryptoServices.Hasher(message, new SHA256Managed()));
+            return message == null
+                ? BadRequest("Bad Request")
+                : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA256Managed()));
         }
 
         [HttpGet("getPublicKey")]
