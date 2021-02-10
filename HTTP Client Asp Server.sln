@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTTP Client", "HTTP Client 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net Core Server", "Net Core Server\Net Core Server.csproj", "{6975993A-C6A3-46A5-93F9-64D3CC9854EB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTTP ClientTests", "HTTP ClientTests\HTTP ClientTests.csproj", "{8643980A-AF64-4F27-B7CF-874311329832}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6975993A-C6A3-46A5-93F9-64D3CC9854EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6975993A-C6A3-46A5-93F9-64D3CC9854EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6975993A-C6A3-46A5-93F9-64D3CC9854EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8643980A-AF64-4F27-B7CF-874311329832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8643980A-AF64-4F27-B7CF-874311329832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8643980A-AF64-4F27-B7CF-874311329832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8643980A-AF64-4F27-B7CF-874311329832}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
