@@ -65,27 +65,26 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 
         private static Result<object, Exception> ChangeTypeScalarImpl(string value, Type conversionType, CultureInfo conversionCulture, bool ignoreValueCase)
         {
-            Func<object> changeType = () =>
+            object changeType()
             {
-                Func<object> safeChangeType = () =>
+                object safeChangeType()
                 {
-                    Func<Type> getUnderlyingType = () => Nullable.GetUnderlyingType(conversionType);
+                    Type getUnderlyingType() => Nullable.GetUnderlyingType(conversionType);
 
                     var type = getUnderlyingType() ?? conversionType;
 
-                    Func<object> withValue =
-                        () => ConvertString(value, type, conversionCulture);
-                    Func<object> empty = () => null;
+                    object withValue() => ConvertString(value, type, conversionCulture);
+                    object empty() => null;
 
                     return (value == null) ? empty() : withValue();
-                };
+                }
 
                 return value.IsBooleanString() && conversionType == typeof(bool)
                     ? value.ToBoolean() : conversionType.GetTypeInfo().IsEnum
                         ? value.ToEnum(conversionType, ignoreValueCase) : safeChangeType();
-            };
+            }
 
-            Func<object> makeType = () =>
+            object makeType()
             {
                 try
                 {
@@ -96,11 +95,11 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
                 {
                     throw new FormatException("Destination conversion type must have a constructor that accepts a string.");
                 }
-            };
+            }
             //if (conversionType.IsCustomStruct()) return Result.Try(makeType);
             return (conversionType.IsPrimitiveEx()
                     ? changeType
-                    : makeType).ResultTry();
+                    : (Func<object>)makeType).ResultTry();
         }
 
         private static object ToEnum(this string value, Type conversionType, bool ignoreValueCase)
