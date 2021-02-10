@@ -16,16 +16,15 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected Hello")]
-        public void ProtectedHello()
+        public string ProtectedHello()
         {
-            if (!UserCheck())
+            if (UserCheck())
             {
-                return;
+                var request = new HttpRequestMessage(HttpMethod.Get, "protected/hello");
+                var response = SendAuthenticatedAsync(request).Result;
+                return GetResponseString(response).Result;
             }
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "protected/hello");
-            var response = SendAuthenticatedAsync(request).Result;
-            Console.WriteLine(GetResponseString(response).Result);
+            return "";
         }
 
         [Command("Protected Sha1")]

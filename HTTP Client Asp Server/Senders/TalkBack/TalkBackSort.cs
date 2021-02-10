@@ -1,9 +1,7 @@
 ﻿using HTTP_Client_Asp_Server.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
@@ -14,7 +12,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("TalkBack Sort")]
-        public void Process(IEnumerable<int> parameters)
+        public string Process(IEnumerable<int> parameters)
         {
             string uri = BuildQuery(parameters);
 
@@ -22,7 +20,7 @@ namespace HTTP_Client_Asp_Server.Senders
             HttpResponseMessage response = SendAsync(request).Result;
             var product = response.Content.ReadAsStringAsync().Result;
 
-            Console.WriteLine(product);
+            return product;
         }
 
         private static string BuildQuery(IEnumerable<int> parameters)

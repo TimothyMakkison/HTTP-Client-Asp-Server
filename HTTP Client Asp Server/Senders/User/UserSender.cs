@@ -15,16 +15,16 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Get")]
-        public async Task GetUser(string line)
+        public async Task<string> GetUser(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"user/new?username={line}");
             var response = await SendAsync(request);
             var product = await GetResponseString(response);
-            Console.WriteLine(product);
+            return product;
         }
 
         [Command("User Post")]
-        public async Task NewUser(string name)
+        public async Task<string> NewUser(string name)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "user/new")
             {
@@ -36,14 +36,14 @@ namespace HTTP_Client_Asp_Server.Senders
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                Console.WriteLine(product);
-                return;
+                return product;
             }
 
             var jObject = JObject.Parse(product);
             var user = new User() { Username = jObject["userName"].Value<string>(), ApiKey = jObject["apiKey"].Value<string>() };
             UserHandler.Set(user);
             Console.WriteLine("Got API Key");
+            return user.ToString();
         }
 
         [Command("User Set")]
@@ -52,7 +52,7 @@ namespace HTTP_Client_Asp_Server.Senders
             // Input should be in the form "User Set <username> <apikey>"
             var parts = line.Split(' ');
 
-            if (parts.Length <= 1)
+            if (parts.Length < 2)
             {
                 Console.WriteLine("Invalid input, must contain a valid username and Guid");
                 return;

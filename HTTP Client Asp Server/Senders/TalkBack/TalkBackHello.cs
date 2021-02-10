@@ -1,5 +1,4 @@
 ﻿using HTTP_Client_Asp_Server.Models;
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -12,12 +11,12 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("TalkBack Hello")]
-        public async Task Hello()
+        public async Task<string> Hello()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
             HttpResponseMessage response = await SendAsync(request);
             var product = await GetResponseString(response);
-            Console.WriteLine(product);
+            return product;
         }
     }
 }
