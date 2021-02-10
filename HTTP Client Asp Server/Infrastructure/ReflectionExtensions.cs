@@ -1,4 +1,4 @@
-﻿using HTTP_Client_Asp_Server.ConsoleClass;
+﻿using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +24,7 @@ namespace HTTP_Client_Asp_Server.Infrastructure
             // Convert into a func of type T.
             return validMethodClassPair.Select(x => x.method.CreateDelegate(x.instance));
         }
+
         public static bool HasAttribute<T>(this MethodInfo methodInfo) where T : Attribute
         {
             return methodInfo.GetCustomAttributes(typeof(T), false).Length > 0;

@@ -16,12 +16,12 @@ namespace HTTP_Client_Asp_Server.Senders
 
         protected bool UserCheck()
         {
-            if (!UserHandler.Assigned)
+            if (UserHandler.Assigned)
             {
-                Console.WriteLine("You need to do a User Post or User Set first");
-                return false;
+                return true;
             }
-            return true;
+            Console.WriteLine("You need to do a User Post or User Set first");
+            return false;
         }
 
         protected async virtual Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request)
