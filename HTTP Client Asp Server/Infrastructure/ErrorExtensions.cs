@@ -8,6 +8,21 @@ namespace HTTP_Client_Asp_Server.Infrastructure
 {
     public static class ErrorExtensions
     {
+        public static bool IsSuccess<T, E>(this Result<T, E> result)
+        {
+            return result.Tag == ResultType.Ok;
+        }
+
+        public static bool IsFail<T, E>(this Result<T, E> result)
+        {
+            return result.Tag == ResultType.Bad;
+        }
+
+        public static Result<TSuccess, TMessage> Bind<TValue, TSuccess, TMessage>(this Result<TValue, TMessage> result, Func<TValue, Result<TSuccess, TMessage>> func)
+        {
+            return Trial.Bind(result, func);
+        }
+
         /// <summary>
         /// Builds a Maybe type instance from a Result one.
         /// </summary>
