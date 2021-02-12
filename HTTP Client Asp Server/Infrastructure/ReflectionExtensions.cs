@@ -30,22 +30,6 @@ namespace HTTP_Client_Asp_Server.Infrastructure
             return methodInfo.GetCustomAttributes(typeof(T), false).Length > 0;
         }
 
-        //TODO Remove HasReturnType
-
-        /// <summary>
-        /// Compares a method info and Delegate returning true if they match.
-        /// </summary>
-        /// <typeparam name="T">Delegate type.</typeparam>
-        /// <param name="methodInfo">MethodInfo</param>
-        /// <returns>Bool determining if the T and methodInfo match.</returns>
-        public static bool HasReturnType<T>(this MethodInfo methodInfo) where T : class
-        {
-            Type delegateType = typeof(T);
-            MethodInfo delegateSignature = delegateType.GetMethod("Invoke");
-
-            return delegateSignature.ReturnType == methodInfo.ReturnType;
-        }
-
         public static Delegate CreateDelegate(this MethodInfo methodInfo, object target)
         {
             Func<Type[], Type> getType;
