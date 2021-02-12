@@ -1,4 +1,5 @@
 ﻿using CSharpx;
+using HTTP_Client_Asp_Server.Infrastructure;
 using HTTP_Client_Asp_Server.Models;
 using RailwaySharp;
 using System.Collections.Generic;
@@ -15,17 +16,22 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
             Commands = new CommandLineBuilder(address).GetCommands();
         }
 
-        public object Process(string input)
+        public Result<object,string> Process(string input)
         {
-            // If not a command then print "Not a command" else Parse input and run command or print error
+            // Get command parse arguments into object array and then invoke.
+            // Return output.
+            var command = GetCommand(input);
+            return command.Bind(command => CommandParser.Parse(input, command))
+                .Bind(arguments => command.Map(c => c.Operation.Invoke(arguments.ToArray())));
+        }
+        private Result<CommandModel,string> GetCommand(string input)
+        {
             return Commands.SingleOrDefault(command => input.StartsWith(command.Data.CommandKey + ""))
                             .ToMaybe()
-                            .Map(
-                command => CommandParser.Parse(input,
-                                               command).Either(
-                    (parameters, _) => command.Operation.Invoke(parameters.ToArray()),
-                    e => string.Join('\n', e)),
-                () => "Not a command.");
+                            .Map(command => Result<CommandModel, string>.Succeed(command),
+                            () => Result<CommandModel, string>.FailWith("Not a command."));
+
+
         }
     }
 }
