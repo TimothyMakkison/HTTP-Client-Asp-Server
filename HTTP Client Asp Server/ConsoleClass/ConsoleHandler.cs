@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RailwaySharp;
+using System;
 
 namespace HTTP_Client_Asp_Server.ConsoleClass
 {
@@ -21,7 +22,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
                 Console.Clear();
 
                 var output = Handler.Process(line);
-                Console.WriteLine(output);
+                Console.WriteLine(output.Either((o, _) => o, e => string.Join(',', e)));
                 Console.WriteLine("What would you like to do next ?");
             }
         }
