@@ -15,12 +15,9 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
             var args = input.ToArgs(command.Data.CommandKey);
 
             // Validate input args and command arg types, pair args with types and then convert into objects.
-
-            var outVal = Validate(args, command)
-                .Map(spec => MatchValues(args, spec))
-                .Map(TypeConverter.ConvertTuples);
-
-            return outVal.Map(ob => ob.Select(x => x.FromJust()));
+            return Validate(args, command).Map(spec => MatchValues(args, spec))
+                                          .Map(TypeConverter.ConvertTuples)
+                                          .Flatten();
         }
 
         public static Result<Specification[], string> Validate(IEnumerable<string> args, CommandModel command)
