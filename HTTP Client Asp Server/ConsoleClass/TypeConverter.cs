@@ -1,5 +1,6 @@
 ﻿using CSharpx;
 using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using RailwaySharp;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,15 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 {
     public static class TypeConverter
     {
+        public static IEnumerable<Maybe<object>> ConvertTuples(this List<Tuple<Specification, IEnumerable<string>>> tuples)
+        {
+            return tuples.Select((pair) => TypeConverter.ChangeType(pair.Item2,
+                                    pair.Item1.ConversionType,
+                                    pair.Item1.TargetType == TargetType.Scalar,
+                                    CultureInfo.InvariantCulture,
+                                    true));
+        }
+
         public static Maybe<object> ChangeType(IEnumerable<string> values, Type conversionType, bool scalar, CultureInfo conversionCulture, bool ignoreValueCase)
         {
             return scalar
