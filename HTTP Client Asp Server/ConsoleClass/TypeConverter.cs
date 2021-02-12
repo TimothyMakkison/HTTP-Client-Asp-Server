@@ -16,20 +16,23 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 {
     public static class TypeConverter
     {
-        public static IEnumerable<Maybe<object>> ConvertTuples(this List<Tuple<Specification, IEnumerable<string>>> tuples)
+        public static IEnumerable<Result<object, string>> ConvertTuples(this List<Tuple<Specification, IEnumerable<string>>> tuples)
         {
-            return tuples.Select((pair) => TypeConverter.ChangeType(pair.Item2,
+            return tuples.Select((pair) => ChangeType(pair.Item2,
                                     pair.Item1.ConversionType,
                                     pair.Item1.TargetType == TargetType.Scalar,
                                     CultureInfo.InvariantCulture,
                                     true));
         }
 
-        public static Maybe<object> ChangeType(IEnumerable<string> values, Type conversionType, bool scalar, CultureInfo conversionCulture, bool ignoreValueCase)
+        public static Result<object, string> ChangeType(IEnumerable<string> values, Type conversionType, bool scalar, CultureInfo conversionCulture, bool ignoreValueCase)
         {
-            return scalar
+            var item = scalar
                 ? ChangeTypeScalar(values.Single(), conversionType, conversionCulture, ignoreValueCase)
                 : ChangeTypeSequence(values, conversionType, conversionCulture, ignoreValueCase);
+
+            return item.Map(x => Result<object, string>.Succeed(x),
+                () => Result<object, string>.FailWith($"Conversion failed when converting args ({string.Join(',', values)}) to type {conversionType}"));
         }
 
         private static Maybe<object> ChangeTypeSequence(IEnumerable<string> values, Type conversionType, CultureInfo conversionCulture, bool ignoreValueCase)
