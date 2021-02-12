@@ -4,7 +4,6 @@ using HTTP_Client_Asp_Server.Models;
 using RailwaySharp;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace HTTP_Client_Asp_Server.ConsoleClass
@@ -13,27 +12,15 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
     {
         public static Result<IEnumerable<object>, string> Parse(string input, CommandModel command)
         {
-            var args = input.Replace(command.Data.CommandKey, "")
-                            .Trim()
-                            .Split()
-                            .Where(arg => arg != default && arg != "")
-                            .ToArray();
-            var specificationsResult = Validate(args, command);
+            var args = input.ToArgs(command.Data.CommandKey);
 
-            if (Trial.Failed(specificationsResult))
-                return Result<IEnumerable<object>, string>.FailWith(specificationsResult.FailedWith());
+            // Validate input args and command arg types, pair args with types and then convert into objects.
 
-            var pairs = MatchValues(args, specificationsResult.SucceededWith());
+            var outVal = Validate(args, command)
+                .Map(spec => MatchValues(args, spec))
+                .Map(TypeConverter.ConvertTuples);
 
-            var outVal = pairs.SucceededWith().Select((pair) => TypeConverter.ChangeType(pair.Item2,
-                                    pair.Item1.ConversionType,
-                                    pair.Item1.TargetType == TargetType.Scalar,
-                                    CultureInfo.InvariantCulture,
-                                    true));
-
-            var vals = outVal.Select(x => x.FromJust());
-
-            return Result<IEnumerable<object>, string>.Succeed(vals);
+            return outVal.Map(ob => ob.Select(x => x.FromJust()));
         }
 
         public static Result<Specification[], string> Validate(IEnumerable<string> args, CommandModel command)
@@ -54,12 +41,12 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
         }
 
         /// <summary>
-        /// Pairs types to its corresponding types.
+        /// Pairs strings to their corresponding types.
         /// </summary>
         /// <param name="args">String array of user input.</param>
         /// <param name="specification">Collection of type data.</param>
         /// <returns>Tuple pairs of types and corresponding strings.</returns>
-        private static Result<List<Tuple<Specification, IEnumerable<string>>>, string> MatchValues(
+        private static List<Tuple<Specification, IEnumerable<string>>> MatchValues(
             IEnumerable<string> args,
             IEnumerable<Specification> specification)
         {
@@ -82,7 +69,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
                     index += diff + 1;
                 }
             }
-            return Result<List<Tuple<Specification, IEnumerable<string>>>, string>.Succeed(outList);
+            return outList;
         }
     }
 }
