@@ -11,9 +11,9 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
     {
         private IEnumerable<CommandModel> Commands { get; set; }
 
-        public CommandLineHandler(string address)
+        public CommandLineHandler(IEnumerable<CommandModel> commands)
         {
-            Commands = new CommandLineBuilder(address).GetCommands();
+            Commands = commands;
         }
 
         public Result<object,string> Process(string input)
@@ -26,6 +26,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
         }
         private Result<CommandModel,string> GetCommand(string input)
         {
+            // Find matching command either returning the value or error message.
             return Commands.SingleOrDefault(command => input.StartsWith(command.Data.CommandKey + ""))
                             .ToMaybe()
                             .Map(command => Result<CommandModel, string>.Succeed(command),
