@@ -1,48 +1,62 @@
-﻿using HTTP_Client_Asp_Server.Infrastructure;
+﻿using CSharpx;
+using HTTP_Client_Asp_Server.Infrastructure;
 using HTTP_Client_Asp_Server.Models;
 using StructureMap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 
 namespace HTTP_Client_Asp_Server.ConsoleClass
 {
-    public class CommandLineBuilder
+    public class CommandLineBuilder : IBuilder
     {
-        private readonly HttpClient client;
+        public List<CommandModel> commandModels = new List<CommandModel>();
+        private Container container;
 
-        public CommandLineBuilder(string address)
+        public IBuilder AddCommand(CommandModel command)
         {
-            client = new HttpClient
-            {
-                BaseAddress = new Uri(address)
-            };
+            commandModels.Add(command);
+            return this;
         }
 
-        public IEnumerable<CommandModel> GetCommands()
+        public CommandLineHandler Build()
         {
-            var container = new Container(_ =>
-            {
-                _.ForSingletonOf<HttpClient>().Use(client);
-                _.ForSingletonOf<UserHandler>();
-                _.ForSingletonOf<CryptoKey>();
-            });
+            container ??= new Container();
 
             //Search assembly for classes that contain methods with chosen attribute
             var valid = Assembly.GetExecutingAssembly()
                                 .GetExportedTypes()
-                                .Where(x => x.IsClass)
-                                .Where(inst => inst.GetMethods()
-                                                   .Any(m => m.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0));
+                                .Where(inst => inst.IsClass
+                                && inst.GetMethods()
+                                .Any(m => m.HasAttribute<CommandAttribute>()));
 
             //Take valid class types and create concrete instances.
-            var classInstances = valid.Select(container.GetInstance);
+            var classInstances = valid.Select(container.TryGetInstance);
 
             var methods = classInstances.BuildValidMethods(m => m.HasAttribute<CommandAttribute>());
 
-            return methods.Select(func => new CommandModel(func.GetMethodInfo().GetCustomAttribute<CommandAttribute>(), func));
+            var commands = methods.Select(func => new CommandModel(func.GetMethodInfo().GetCustomAttribute<CommandAttribute>(), func));
+            commandModels.AddRange(commands);
+
+            return new CommandLineHandler(commandModels);
+        }
+
+        /*Add commands ie exit
+         *  Scan assembly
+         *  Add containers
+         *  Build - return CommandLineHand
+         */
+
+        public IBuilder Scan()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuilder SetContainer(Container container)
+        {
+            this.container = container;
+            return this;
         }
     }
 }
