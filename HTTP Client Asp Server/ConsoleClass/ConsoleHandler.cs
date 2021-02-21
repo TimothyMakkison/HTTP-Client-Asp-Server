@@ -21,8 +21,9 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
                 var line = Console.ReadLine();
                 Console.Clear();
 
-                var output = Handler.Process(line);
-                Console.WriteLine(output.Either((o, _) => o, e => string.Join(',', e)));
+                Result<object, string> output = Handler.Process(line);
+                object result = output.Either((o, _) => o, e => string.Join(',', e));
+                Console.WriteLine(result);
                 Console.WriteLine("What would you like to do next ?");
             }
         }

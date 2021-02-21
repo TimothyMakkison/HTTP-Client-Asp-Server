@@ -10,8 +10,9 @@ namespace HTTP_Client_Asp_Server.Infrastructure
 {
     public static class ReflectionExtensions
     {
+        //TODO Rework BuildMethod.
         public static IEnumerable<Delegate> BuildValidMethods(this IEnumerable<object> classInstances, Func<MethodInfo, bool> filter)
-        {
+        {   
             //Filter for classes, then iterate through methods, selecting methods that take the same arguments and return type as T
             IEnumerable<(object instance, IEnumerable<MethodInfo> methods)> validMethods = classInstances.Where(x => x.GetType().IsClass)
                        .Select(instance => (instance, methods: instance.GetType()
@@ -19,10 +20,11 @@ namespace HTTP_Client_Asp_Server.Infrastructure
                                                                        .Where(filter)));
 
             // Flatten into class instance, methodinfo pairing.
-            var validMethodClassPair = validMethods.SelectMany(a => a.methods, (tuple, method) => (tuple.instance, method));
+            var validMethodClassPair = validMethods.SelectMany(pair => pair.methods,
+                (tuple, method) => (tuple.instance, method));
 
             // Convert into a func of type T.
-            return validMethodClassPair.Select(x => x.method.CreateDelegate(x.instance));
+            return validMethodClassPair.Select(pair => pair.method.CreateDelegate(pair.instance));
         }
 
         public static bool HasAttribute<T>(this MethodInfo methodInfo) where T : Attribute

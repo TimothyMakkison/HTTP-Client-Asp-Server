@@ -6,6 +6,11 @@ namespace HTTP_Client_Asp_Server.Infrastructure
 {
     public static class EnumerableExtensions
     {
+        public static IEnumerable<T> ForAll<T>(this IEnumerable<T> source, IEnumerable<Func<T,bool>> predicates)
+        {
+            return source.Where(item => predicates
+            .All(cond => cond(item)));
+        }
         public static IEnumerable<T> Yield<T>(this T value)
         {
             yield return value;
