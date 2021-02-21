@@ -23,12 +23,12 @@ namespace HTTP_Client_Asp_Server
                 _.ForSingletonOf<CryptoKey>();
             });
 
-            var built = new CommandLineBuilder()
+            var handler = new CommandLineBuilder()
                 .SetContainer(container)
                 .AddCommand(new CommandModel("exit", new Action(() => Environment.Exit(0))))
                 .Build();
 
-            var console = new ConsoleHandler(built);
+            var console = new ConsoleHandler(handler);
             console.Run();
         }
     }
