@@ -10,7 +10,15 @@ namespace HTTP_Client_Asp_Server
     {
         private static void Main()
         {
-            string address = @"https://localhost:44391/api/";
+            const string address = @"https://localhost:44391/api/";
+            CommandLineHandler handler = BuildHandler(address);
+
+            var console = new ConsoleHandler(handler);
+            console.Run();
+        }
+
+        private static CommandLineHandler BuildHandler(string address)
+        {
             var client = new HttpClient
             {
                 BaseAddress = new Uri(address)
@@ -23,13 +31,10 @@ namespace HTTP_Client_Asp_Server
                 _.ForSingletonOf<CryptoKey>();
             });
 
-            var handler = new CommandLineBuilder()
+            return new CommandLineBuilder()
                 .SetContainer(container)
                 .AddCommand(new CommandModel("exit", new Action(() => Environment.Exit(0))))
                 .Build();
-
-            var console = new ConsoleHandler(handler);
-            console.Run();
         }
     }
 }
