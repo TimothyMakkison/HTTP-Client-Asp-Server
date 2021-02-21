@@ -10,8 +10,8 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
     internal class AssemblyScanner : IAssemblyScanner
     {
         private Assembly assembly;
-        private List<Func<Type, bool>> classFilter;
-        private List<Func<MethodInfo, bool>> methodFilter;
+        private readonly List<Func<Type, bool>> classFilter;
+        private readonly List<Func<MethodInfo, bool>> methodFilter;
 
         public AssemblyScanner()
         {
@@ -52,10 +52,13 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 
         public IEnumerable<(Type type, IEnumerable<MethodInfo> methods)> ScanAssembly()
         {
-            var a = assembly.GetExportedTypes()
+            // Scan assembly for all classes that meed criteria,
+            // then scan class for all methods that meet criteria,
+            // remove classes with 0 methods.
+            return assembly.GetExportedTypes()
                 .ForAll(classFilter)
-                .Select(c => (@class: c, c.GetMethods().ForAll(methodFilter))).ToArray();
-            return a;
+                .Select(c => (@class: c, methods: c.GetMethods().ForAll(methodFilter)))
+                .Where(p => p.methods.Any());
         }
     }
 }
