@@ -1,27 +1,27 @@
-﻿using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
-    public class UserSender : AuthenticatedSender
+    public class UserSender
     {
-        public UserSender(HttpClient client, IOutput output, UserHandler userHandler) 
-            : base(client, output, userHandler)
+        private readonly IAuthenticatedSender _sender;
+
+        public UserSender(IAuthenticatedSender sender)
         {
+            _sender = sender;
         }
 
         [Command("User Get")]
         public async Task<string> GetUser(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"user/new?username={line}");
-            var response = await SendAsync(request);
-            var product = await GetResponseString(response);
+            var response = await _sender.SendAsync(request);
+            var product = await _sender.GetResponseString(response);
             return product;
         }
 
@@ -30,11 +30,11 @@ namespace HTTP_Client_Asp_Server.Senders
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "user/new")
             {
-                Content = ToHttpContent(name)
+                Content = _sender.ToHttpContent(name)
             };
 
-            HttpResponseMessage response = await SendAsync(request);
-            var product = await GetResponseString(response);
+            HttpResponseMessage response = await _sender.SendAsync(request);
+            var product = await _sender.GetResponseString(response);
 
             if (response.StatusCode is not HttpStatusCode.OK)
             {
@@ -43,13 +43,13 @@ namespace HTTP_Client_Asp_Server.Senders
 
             var jObject = JObject.Parse(product);
 
-            var user = new User() 
+            var user = new User()
             {
-                Username = jObject["userName"].Value<string>(), 
-                ApiKey = Guid.Parse(jObject["apiKey"].Value<string>()) 
+                Username = jObject["userName"].Value<string>(),
+                ApiKey = Guid.Parse(jObject["apiKey"].Value<string>())
             };
 
-            UserHandler.Set(user);
+            _sender.UserHandler.Set(user);
             Console.WriteLine("Got API Key");
             return user.ToString();
         }
@@ -58,21 +58,21 @@ namespace HTTP_Client_Asp_Server.Senders
         public string UserSet(string name, Guid guid)
         {
             var user = new User() { Username = name, ApiKey = guid };
-            UserHandler.Set(user);
+            _sender.UserHandler.Set(user);
             return $"Stored {user}";
         }
 
         [Command("User Delete")]
         public async Task DeleteUser()
         {
-            if (!UserCheck())
+            if (!_sender.UserCheck())
             {
                 return;
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={UserHandler.Value.Username}");
-            var response = await SendAuthenticatedAsync(request);
-            var product = await GetResponseString(response);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={_sender.UserHandler.Value.Username}");
+            var response = await _sender.SendAuthenticatedAsync(request);
+            var product = await _sender.GetResponseString(response);
             var success = Convert.ToBoolean(product);
             Console.WriteLine(success);
         }
@@ -80,18 +80,18 @@ namespace HTTP_Client_Asp_Server.Senders
         [Command("User Role")]
         public async Task ChangeRole(string username, string role)
         {
-            if (!UserCheck())
+            if (!_sender.UserCheck())
             {
                 return;
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, "user/changerole")
             {
-                Content = ToHttpContent(new { username, role })
+                Content = _sender.ToHttpContent(new { username, role })
             };
 
-            var response = await SendAuthenticatedAsync(request);
-            Console.WriteLine(await GetResponseString(response));
+            var response = await _sender.SendAuthenticatedAsync(request);
+            Console.WriteLine(await _sender.GetResponseString(response));
         }
     }
 }
