@@ -11,9 +11,9 @@ namespace HTTP_Client_Asp_Server.Senders
     public class UserSender
     {
         private readonly IAuthenticatedSender _sender;
-        private readonly IOutput _output;
+        private readonly I _output;
 
-        public UserSender(IAuthenticatedSender sender, IOutput output)
+        public UserSender(IAuthenticatedSender sender, I output)
         {
             _sender = sender;
             _output = output;

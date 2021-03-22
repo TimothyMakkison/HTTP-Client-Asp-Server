@@ -7,9 +7,9 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
     public class ConsoleHandler
     {
         private CommandLineHandler Handler { get; set; }
-        private readonly IOutput output;
+        private readonly I output;
 
-        public ConsoleHandler(CommandLineHandler handler, IOutput output)
+        public ConsoleHandler(CommandLineHandler handler, I output)
         {
             Handler = handler;
             this.output = output;

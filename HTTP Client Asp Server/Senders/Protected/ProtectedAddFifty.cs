@@ -11,11 +11,11 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class ProtectedAddFifty
     {
-        private readonly IOutput _output;
+        private readonly I _output;
         private readonly CryptoKey _serverPublicKey;
         private readonly IAuthenticatedSender _sender;
 
-        public ProtectedAddFifty(IOutput output, CryptoKey cryptoKey, IAuthenticatedSender sender)
+        public ProtectedAddFifty(I output, CryptoKey cryptoKey, IAuthenticatedSender sender)
         {
             _output = output;
             _serverPublicKey = cryptoKey;

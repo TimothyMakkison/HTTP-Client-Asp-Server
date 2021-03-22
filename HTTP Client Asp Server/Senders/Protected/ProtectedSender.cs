@@ -9,11 +9,11 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class ProtectedSender
     {
-        private readonly IOutput _output;
+        private readonly I _output;
         private readonly CryptoKey _serverPublicKey;
         private readonly IAuthenticatedSender _sender;
 
-        public ProtectedSender(IOutput output, CryptoKey cryptoKey, IAuthenticatedSender sender)
+        public ProtectedSender(I output, CryptoKey cryptoKey, IAuthenticatedSender sender)
         {
             _output = output;
             _serverPublicKey = cryptoKey;

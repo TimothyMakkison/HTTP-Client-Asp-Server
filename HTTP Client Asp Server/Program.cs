@@ -33,7 +33,7 @@ namespace HTTP_Client_Asp_Server
                 _.ForSingletonOf<HttpClient>().Use(client);
                 _.ForSingletonOf<UserHandler>();
                 _.ForSingletonOf<CryptoKey>();
-                _.ForSingletonOf<IOutput>().Use(consoleOutput);
+                _.ForSingletonOf<I>().Use(consoleOutput);
                 _.For<IAuthenticatedSender>().Add<AuthenticatedSender>();
                 _.For<ISender>().Add<Sender>();
             });

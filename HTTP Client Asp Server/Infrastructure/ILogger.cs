@@ -2,7 +2,7 @@
 
 namespace HTTP_Client_Asp_Server.Infrastructure
 {
-    public interface IOutput
+    public interface ILogger
     {
         public void Print(object message, ConsoleColor color = ConsoleColor.White);
         public void Log(object message, LogType logType = LogType.Info);
