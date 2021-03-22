@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
@@ -10,10 +11,12 @@ namespace HTTP_Client_Asp_Server.Senders
     public class UserSender
     {
         private readonly IAuthenticatedSender _sender;
+        private readonly IOutput _output;
 
-        public UserSender(IAuthenticatedSender sender)
+        public UserSender(IAuthenticatedSender sender, IOutput output)
         {
             _sender = sender;
+            _output = output;
         }
 
         [Command("User Get")]
@@ -50,7 +53,7 @@ namespace HTTP_Client_Asp_Server.Senders
             };
 
             _sender.UserHandler.Set(user);
-            Console.WriteLine("Got API Key");
+            _output.Log("Got API Key");
             return user.ToString();
         }
 
@@ -74,7 +77,7 @@ namespace HTTP_Client_Asp_Server.Senders
             var response = await _sender.SendAuthenticatedAsync(request);
             var product = await _sender.GetResponseString(response);
             var success = Convert.ToBoolean(product);
-            Console.WriteLine(success);
+            _output.Log(success.ToString());
         }
 
         [Command("User Role")]
@@ -91,7 +94,7 @@ namespace HTTP_Client_Asp_Server.Senders
             };
 
             var response = await _sender.SendAuthenticatedAsync(request);
-            Console.WriteLine(await _sender.GetResponseString(response));
+            _output.Log(await _sender.GetResponseString(response));
         }
     }
 }

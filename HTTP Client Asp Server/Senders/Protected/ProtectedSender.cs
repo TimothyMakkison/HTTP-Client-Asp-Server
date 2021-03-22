@@ -42,7 +42,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha1?message={message}");
             var response = await _sender.SendAuthenticatedAsync(request);
-            Console.WriteLine(await _sender.GetResponseString(response));
+            _output.Log(await _sender.GetResponseString(response));
         }
 
         [Command("Protected SHA256")]
@@ -55,7 +55,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sha256?message={message}");
             var response = await _sender.SendAuthenticatedAsync(request);
-            Console.WriteLine(await _sender.GetResponseString(response));
+            _output.Log(await _sender.GetResponseString(response));
         }
 
         [Command("Protected Get PublicKey")]
@@ -77,7 +77,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             var content = await _sender.GetResponseString(response);
             _serverPublicKey.Set(content);
-            Console.WriteLine("Got Public Key");
+            _output.Log("Got Public Key");
         }
     }
 }
