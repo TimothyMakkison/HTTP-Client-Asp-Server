@@ -2,7 +2,7 @@
 
 namespace HTTP_Client_Asp_Server.Infrastructure
 {
-    public class ConsoleOutput : I
+    public class ConsoleOutput : ILogger
     {
         public void Log(object message, LogType logType)
         {

@@ -8,9 +8,9 @@ namespace HTTP_Client_Asp_Server.Senders
     public class Sender : ISender
     {
         protected HttpClient Client;
-        protected I Output;
+        protected ILogger Output;
 
-        public Sender(HttpClient client, I output)
+        public Sender(HttpClient client, ILogger output)
         {
             this.Client = client;
             this.Output = output;

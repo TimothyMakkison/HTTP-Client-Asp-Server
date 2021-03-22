@@ -10,7 +10,7 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         public UserHandler UserHandler { get; set; }
 
-        public AuthenticatedSender(HttpClient client, I output, UserHandler userHandler) : base(client, output)
+        public AuthenticatedSender(HttpClient client, ILogger output, UserHandler userHandler) : base(client, output)
         {
             UserHandler = userHandler;
         }
