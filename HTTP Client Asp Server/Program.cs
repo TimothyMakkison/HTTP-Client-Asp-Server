@@ -43,6 +43,3 @@ namespace HTTP_Client_Asp_Server
         }
     }
 }
-//TODO Add StructureMap like CommandBuilder constructor
-
-//TODO 

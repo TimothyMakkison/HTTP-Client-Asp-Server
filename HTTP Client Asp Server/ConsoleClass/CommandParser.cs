@@ -28,6 +28,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
             var name = command.Operation.Method.Name;
             var collectionCount = specifications.Where(spec => spec.TargetType != TargetType.Scalar).Count();
 
+            //TODO clean up return
             return collectionCount > 1
                 ? Result<Specification[], string>.FailWith("Ambiguous conversion.\nCommand " + name + " cannot have more than one collection parameter type")
                 : specifications.Length > args.Count()

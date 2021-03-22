@@ -27,6 +27,8 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 
                 Result<object, string> hOutput = Handler.Process(line);
                 object result = hOutput.Either((o, _) => o, e => string.Join(',', e));
+
+                //TODO fix crash if returning void.
                 output.Print(result.ToString());
                 output.Print("What would you like to do next ?");
             }
