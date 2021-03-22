@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         public UserHandler UserHandler { get; set; }
 
-        public AuthenticatedSender(HttpClient client, UserHandler userHandler) : base(client)
+        public AuthenticatedSender(HttpClient client, IOutput output ,UserHandler userHandler) : base(client,output)
         {
             UserHandler = userHandler;
         }
@@ -20,7 +21,7 @@ namespace HTTP_Client_Asp_Server.Senders
             {
                 return true;
             }
-            Console.WriteLine("You need to do a User Post or User Set first");
+            Output.Log("You need to do a User Post or User Set first",LogType.Warning);
             return false;
         }
 

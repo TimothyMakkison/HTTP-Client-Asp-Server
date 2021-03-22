@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -6,7 +7,8 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class TalkBackHello : BaseSender
     {
-        public TalkBackHello(HttpClient client) : base(client)
+        public TalkBackHello(HttpClient client, IOutput output) 
+            : base(client, output)
         {
         }
 

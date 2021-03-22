@@ -12,7 +12,8 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         private CryptoKey ServerPublicKey { get; set; }
 
-        public ProtectedSignMessage(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
+        public ProtectedSignMessage(HttpClient client, IOutput output, UserHandler userHandler, CryptoKey cryptoKey) 
+            : base(client, output, userHandler)
         {
             ServerPublicKey = cryptoKey;
         }

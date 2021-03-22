@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +11,7 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         private CryptoKey ServerPublicKey { get; set; }
 
-        public ProtectedSender(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
+        public ProtectedSender(HttpClient client, IOutput output, UserHandler userHandler, CryptoKey cryptoKey) : base(client, output, userHandler)
         {
             ServerPublicKey = cryptoKey;
         }

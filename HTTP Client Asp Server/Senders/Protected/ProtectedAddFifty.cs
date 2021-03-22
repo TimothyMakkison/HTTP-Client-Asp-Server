@@ -13,7 +13,7 @@ namespace HTTP_Client_Asp_Server.Senders
     {
         private CryptoKey ServerPublicKey { get; set; }
 
-        public ProtectedAddFifty(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
+        public ProtectedAddFifty(HttpClient client, IOutput output, UserHandler userHandler, CryptoKey cryptoKey) : base(client, output ,userHandler)
         {
             ServerPublicKey = cryptoKey;
         }
@@ -28,7 +28,7 @@ namespace HTTP_Client_Asp_Server.Senders
 
             if (!int.TryParse(value, out int _))
             {
-                Console.WriteLine("A valid integer must be given!");
+                Output.Log("A valid integer must be given!", LogType.Warning);
                 return;
             }
 
@@ -38,12 +38,12 @@ namespace HTTP_Client_Asp_Server.Senders
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                Console.WriteLine("An error occurred!");
+                Output.Log("An error occurred!", LogType.Warning);
                 return;
             }
 
             string decrypted = await Decrypt(response, aes);
-            Console.WriteLine(decrypted);
+            Output.Print(decrypted);
         }
 
         private HttpRequestMessage GenerateWebRequest(string value, Aes Aes)
@@ -79,7 +79,7 @@ namespace HTTP_Client_Asp_Server.Senders
             if (ServerPublicKey.Assigned)
                 return true;
 
-            Console.WriteLine("Client doesn’t yet have the public key");
+            Output.Log("Client doesn’t yet have the public key",LogType.Warning);
             return false;
         }
     }

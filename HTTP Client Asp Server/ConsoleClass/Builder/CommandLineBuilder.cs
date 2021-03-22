@@ -12,7 +12,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
     public class CommandLineBuilder : IBuilder
     {
         public List<CommandModel> commandModels = new List<CommandModel>();
-        private List<IAssemblyScanner> scanners = new List<IAssemblyScanner>();
+        private readonly List<IAssemblyScanner> scanners = new List<IAssemblyScanner>();
         private Container container;
 
         public IBuilder AddCommand(CommandModel command)

@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -7,7 +8,7 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class TalkBackSort : BaseSender
     {
-        public TalkBackSort(HttpClient client) : base(client)
+        public TalkBackSort(HttpClient client, IOutput output) : base(client, output)
         {
         }
 

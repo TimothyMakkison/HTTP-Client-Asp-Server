@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,16 +9,18 @@ namespace HTTP_Client_Asp_Server.Senders
     public abstract class BaseSender
     {
         protected HttpClient Client;
+        protected IOutput Output;
 
-        public BaseSender(HttpClient client)
+        public BaseSender(HttpClient client, IOutput output)
         {
             this.Client = client;
+            this.Output = output;
         }
 
         protected async virtual Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
             var result = Client.SendAsync(request);
-            Console.WriteLine("...please wait...");
+            Output.Log("...please wait...");
             return await result;
         }
 

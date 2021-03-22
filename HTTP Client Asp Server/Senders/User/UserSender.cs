@@ -1,4 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace HTTP_Client_Asp_Server.Senders
 {
     public class UserSender : AuthenticatedSender
     {
-        public UserSender(HttpClient client, UserHandler userHandler) : base(client, userHandler)
+        public UserSender(HttpClient client, IOutput output, UserHandler userHandler) 
+            : base(client, output, userHandler)
         {
         }
 
