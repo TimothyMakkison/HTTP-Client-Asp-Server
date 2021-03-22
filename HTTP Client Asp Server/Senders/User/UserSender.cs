@@ -34,35 +34,32 @@ namespace HTTP_Client_Asp_Server.Senders
             };
 
             HttpResponseMessage response = await SendAsync(request);
-            var product = GetResponseString(response).Result;
+            var product = await GetResponseString(response);
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode is not HttpStatusCode.OK)
             {
                 return product;
             }
 
             var jObject = JObject.Parse(product);
-            var user = new User() { Username = jObject["userName"].Value<string>(), ApiKey = jObject["apiKey"].Value<string>() };
+
+            var user = new User() 
+            {
+                Username = jObject["userName"].Value<string>(), 
+                ApiKey = Guid.Parse(jObject["apiKey"].Value<string>()) 
+            };
+
             UserHandler.Set(user);
             Console.WriteLine("Got API Key");
             return user.ToString();
         }
 
         [Command("User Set")]
-        public void UserSet(string line)
+        public string UserSet(string name, Guid guid)
         {
-            // Input should be in the form "User Set <username> <apikey>"
-            var parts = line.Split(' ');
-
-            if (parts.Length < 2)
-            {
-                Console.WriteLine("Invalid input, must contain a valid username and Guid");
-                return;
-            }
-
-            var user = new User() { Username = string.Join(" ", parts.Take(parts.Length - 1)), ApiKey = parts.LastOrDefault() };
+            var user = new User() { Username = name, ApiKey = guid };
             UserHandler.Set(user);
-            Console.WriteLine("Stored");
+            return $"Stored {user}";
         }
 
         [Command("User Delete")]
@@ -81,19 +78,8 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("User Role")]
-        public void ChangeRole(string line)
+        public async Task ChangeRole(string username, string role)
         {
-            var parts = line.Split(' ');
-
-            if (parts.Length <= 1)
-            {
-                Console.WriteLine("Invalid input, must contain a valid username and role");
-                return;
-            }
-
-            var role = parts.LastOrDefault();
-            var username = string.Join(" ", parts.Take(parts.Length - 1));
-
             if (!UserCheck())
             {
                 return;
@@ -104,8 +90,8 @@ namespace HTTP_Client_Asp_Server.Senders
                 Content = ToHttpContent(new { username, role })
             };
 
-            var response = SendAuthenticatedAsync(request).Result;
-            Console.WriteLine(GetResponseString(response).Result);
+            var response = await SendAuthenticatedAsync(request);
+            Console.WriteLine(await GetResponseString(response));
         }
     }
 }

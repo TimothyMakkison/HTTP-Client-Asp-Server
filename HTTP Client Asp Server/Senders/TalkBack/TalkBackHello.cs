@@ -17,8 +17,7 @@ namespace HTTP_Client_Asp_Server.Senders
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
             HttpResponseMessage response = await SendAsync(request);
-            var product = await GetResponseString(response);
-            return product;
+            return await base.GetResponseString(response);
         }
     }
 }

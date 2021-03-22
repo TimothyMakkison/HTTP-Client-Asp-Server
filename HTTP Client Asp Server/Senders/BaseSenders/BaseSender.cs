@@ -1,5 +1,4 @@
 ﻿using HTTP_Client_Asp_Server.Infrastructure;
-using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
