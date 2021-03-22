@@ -4,7 +4,7 @@ namespace HTTP_Client_Asp_Server.Infrastructure
 {
     public class ConsoleOutput : IOutput
     {
-        public void Log(string message, LogType logType)
+        public void Log(object message, LogType logType)
         {
             var color = logType switch
             {
@@ -17,7 +17,7 @@ namespace HTTP_Client_Asp_Server.Infrastructure
             Print(message, color);
         }
 
-        public void Print(string message, ConsoleColor color)
+        public void Print(object message, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(message);
