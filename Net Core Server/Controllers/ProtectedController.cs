@@ -14,9 +14,12 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class ProtectedController : ControllerBase
     {
-        private readonly UserDataAccess dataAccess;
+        private readonly IUserDataAccess dataAccess;
 
-        public ProtectedController(UserContext context) => dataAccess = new UserDataAccess(context);
+        public ProtectedController(UserContext context)
+        {
+            dataAccess = new UserDataAccess(context);
+        }
 
         [HttpGet("hello")]
         public async Task<ActionResult<string>> GetHello()
@@ -29,11 +32,9 @@ namespace Net_Core_Server.Controllers
         [HttpGet("sha1")]
         public ActionResult<string> GetSha1([FromQuery] string message)
         {
-            if (message == null)
-            {
-                return BadRequest("Bad Request");
-            }
-            return Ok(CryptoServices.Hasher(message, new SHA1Managed()));
+            return message == null 
+                ? BadRequest("Bad Request") 
+                : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA1Managed()));
         }
 
         [HttpGet("sha256")]
@@ -45,7 +46,10 @@ namespace Net_Core_Server.Controllers
         }
 
         [HttpGet("getPublicKey")]
-        public ActionResult<string> GetPublicKey() => Ok(CryptoServices.RsaPublicKey);
+        public ActionResult<string> GetPublicKey()
+        {
+            return Ok(CryptoServices.RsaPublicKey);
+        }
 
         [HttpGet("sign")]
         public ActionResult<string> GetSignValue([FromQuery] string message)
