@@ -23,7 +23,7 @@ namespace HTTP_Client_Asp_Server.Senders
         }
 
         [Command("Protected AddFifty")]
-        public async Task Process(string value)
+        public async Task Process(int value)
         {
             //TODO change value to int and allow auto converter to handle.
             if (!HasKey())
@@ -31,17 +31,11 @@ namespace HTTP_Client_Asp_Server.Senders
                 return;
             }
 
-            if (!int.TryParse(value, out int _))
-            {
-                _output.Log("A valid integer must be given!", LogType.Warning);
-                return;
-            }
-
             using Aes aes = Aes.Create();
             var request = GenerateWebRequest(value, aes);
             HttpResponseMessage response = await _sender.SendAuthenticatedAsync(request);
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode is not HttpStatusCode.OK)
             {
                 _output.Log("An error occurred!", LogType.Warning);
                 return;
@@ -51,13 +45,13 @@ namespace HTTP_Client_Asp_Server.Senders
             _output.Print(decrypted);
         }
 
-        private HttpRequestMessage GenerateWebRequest(string value, Aes Aes)
+        private HttpRequestMessage GenerateWebRequest(int value, Aes Aes)
         {
             using var rsa = new RSACryptoServiceProvider();
             rsa.FromXmlString(_serverPublicKey.Value);
 
-            // Convert value to bytes then
-            byte[] valueBytes = Encoding.UTF8.GetBytes(value);
+            // Convert value to bytes then add to uri
+            byte[] valueBytes = Encoding.UTF8.GetBytes(value.ToString());
             string encryptValue = toEncryptedHex(valueBytes);
             string encryptKey = toEncryptedHex(Aes.Key);
             string encryptIV = toEncryptedHex(Aes.IV);

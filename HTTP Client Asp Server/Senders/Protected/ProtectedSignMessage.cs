@@ -23,7 +23,12 @@ namespace HTTP_Client_Asp_Server.Senders
         [Command("Protected Sign")]
         public async Task Process(string value)
         {
-            if (!HasKey() || !_sender.UserCheck())
+            if (!HasKey())
+            {
+                return;
+            }
+
+            if (!_sender.UserCheck())
             {
                 return;
             }
