@@ -86,7 +86,7 @@ namespace Client.ConsoleClass
                     object withValue() => ConvertString(value, type, conversionCulture);
                     object empty() => null;
 
-                    return (value == null) ? empty() : withValue();
+                    return (value is null) ? empty() : withValue();
                 }
 
                 return value.IsBooleanString() && conversionType == typeof(bool)

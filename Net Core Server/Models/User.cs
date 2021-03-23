@@ -7,7 +7,6 @@ namespace Net_Core_Server.Models
     {
         public User()
         {
-            //ApiKey = new Guid();
         }
 
         [Key]

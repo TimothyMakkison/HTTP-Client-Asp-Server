@@ -32,7 +32,7 @@ namespace Net_Core_Server.Controllers
         [HttpGet("sha1")]
         public ActionResult<string> GetSha1([FromQuery] string message)
         {
-            return message == null 
+            return message is null 
                 ? BadRequest("Bad Request") 
                 : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA1Managed()));
         }
@@ -40,7 +40,7 @@ namespace Net_Core_Server.Controllers
         [HttpGet("sha256")]
         public ActionResult<string> GetSha256([FromQuery] string message)
         {
-            return message == null
+            return message is null
                 ? BadRequest("Bad Request")
                 : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA256Managed()));
         }
@@ -54,7 +54,7 @@ namespace Net_Core_Server.Controllers
         [HttpGet("sign")]
         public ActionResult<string> GetSignValue([FromQuery] string message)
         {
-            if (message == null)
+            if (message is null)
             {
                 return BadRequest("Query must contain a value.");
             }

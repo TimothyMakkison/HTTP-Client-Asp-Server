@@ -18,7 +18,7 @@ namespace Net_Core_Server.Filters
 
         private bool CheckRolePermission(ClaimsPrincipal claims, string condition)
         {
-            if (Roles == null || Roles == "")
+            if (Roles is null || Roles == "")
             {
                 return true;
             }

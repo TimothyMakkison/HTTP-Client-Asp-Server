@@ -46,7 +46,7 @@ namespace Client.Infrastructure
 
         public static Result<TSuccess, Exception> ResultTry<TSuccess>(this Func<TSuccess> func)
         {
-            if (func == null) throw new ArgumentException(null, nameof(func));
+            if (func is null) throw new ArgumentException(null, nameof(func));
 
             try
             {
