@@ -28,7 +28,8 @@ namespace Net_Core_Server
             //    options.Filters.Add(new Filters.AuthFilter());
             //});
             services.AddControllers();
-            services.AddMvcCore().AddNewtonsoftJson();
+            services.AddMvcCore()
+                .AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,7 +39,7 @@ namespace Net_Core_Server
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseMiddleware<Middleware.AuthMiddleware>();
             app.UseRouting();

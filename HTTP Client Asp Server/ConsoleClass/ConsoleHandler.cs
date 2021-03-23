@@ -1,29 +1,36 @@
-﻿using RailwaySharp;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using RailwaySharp;
 using System;
 
 namespace HTTP_Client_Asp_Server.ConsoleClass
 {
     public class ConsoleHandler
     {
-        public ConsoleHandler(CommandLineHandler handler)
+        private CommandLineHandler Handler { get; set; }
+        private readonly ILogger output;
+
+        public ConsoleHandler(CommandLineHandler handler, ILogger output)
         {
             Handler = handler;
+            this.output = output;
         }
-
-        private CommandLineHandler Handler { get; set; }
 
         public void Run()
         {
-            Console.WriteLine("Hello. What would you like to do?");
+            //TODO Make programs write to some ILog or IPrint instead of directly to console.
+            output.Print("Hello. What would you like to do?");
 
             while (true)
             {
                 var line = Console.ReadLine();
-                Console.Clear();
+                output.Clear();
 
-                var output = Handler.Process(line);
-                Console.WriteLine(output.Either((o, _) => o, e => string.Join(',', e)));
-                Console.WriteLine("What would you like to do next ?");
+                Result<object, string> hOutput = Handler.Process(line);
+                object result = hOutput.Either((o, _) => o, e => string.Join(',', e));
+
+                //TODO fix crash if returning void.
+                output.Print(result.ToString());
+                output.Print("What would you like to do next ?");
             }
         }
     }

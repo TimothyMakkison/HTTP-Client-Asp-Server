@@ -36,14 +36,10 @@ namespace Net_Core_Server.Controllers
             {
                 return BadRequest("Oops. Make sure your body contains a string with your username and your Content - Type is Content - Type:application / json");
             }
-            if (await dataAccess.ContainsUsername(jsonString))
-            {
-                return Forbid("Oops. This username is already in use. Please try again with a new username.");
-            }
-            else
-            {
-                return Ok(await dataAccess.AddNewUser(jsonString));
-            }
+
+            return await dataAccess.ContainsUsername(jsonString)
+                ? Forbid("Oops. This username is already in use. Please try again with a new username.")
+                : (ActionResult<string>)Ok(await dataAccess.Add(jsonString));
         }
 
         [HttpDelete("RemoveUser")]

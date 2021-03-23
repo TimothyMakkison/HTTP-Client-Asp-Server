@@ -18,23 +18,29 @@ namespace Net_Core_Server.Middleware
             var dict = context.Request.Headers;
             var apiKey = dict["ApiKey"].ToString();
 
-            if (apiKey != "")
+            if (apiKey == "")
             {
-                UserDataAccess access = new UserDataAccess(userContext);
-                var user = await access.TryGet(Guid.Parse(apiKey));
-
-                if (user != null)
-                {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.Role, user.Role),
-                    };
-                    var identityClaim = new ClaimsIdentity(claims, "ApiKey");
-
-                    context.User.AddIdentity(identityClaim);
-                }
+                await next(context);
+                return;
             }
+
+            UserDataAccess access = new UserDataAccess(userContext);
+            var user = await access.TryGet(Guid.Parse(apiKey));
+
+            if (user is null)
+            {
+                await next(context);
+                return;
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role),
+            };
+            var identityClaim = new ClaimsIdentity(claims, "ApiKey");
+
+            context.User.AddIdentity(identityClaim);
 
             await next(context);
         }

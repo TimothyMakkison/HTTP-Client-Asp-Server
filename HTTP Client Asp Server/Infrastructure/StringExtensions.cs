@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HTTP_Client_Asp_Server.Infrastructure
 {
     public static class StringExtensions
     {
-        public static string[] ToArgs(this string input, string commandKey)
+        public static IEnumerable<string> RemoveValueAndSplit(this string input, string removedWord)
         {
-            return input.Replace(commandKey, "")
-                            .Trim()
-                            .Split()
-                            .Where(arg => arg != default && arg != "")
-                            .ToArray();
+            return input.Replace(removedWord, "")
+                        .Trim()
+                        .Split()
+                        .Where(arg => arg != default && arg != "");
         }
 
         public static bool IsBooleanString(this string value)
