@@ -13,17 +13,17 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserDataAccess dataAccess;
+        private readonly IUserDataAccess _dataAccess;
 
-        public UserController(UserContext context)
+        public UserController(IUserDataAccess dataAccess)
         {
-            dataAccess = new UserDataAccess(context);
+            _dataAccess = dataAccess;
         }
 
         [HttpGet("new")]
         public async Task<ActionResult<string>> GetUser([FromQuery] string username)
         {
-            string output = await dataAccess.ContainsUsername(username)
+            string output = await _dataAccess.ContainsUsername(username)
                 ? "True - User Does Exist!"
                 : "False - User Does Not Exist! Did you mean to do a POST to create a new user?";
             return Ok(output);
@@ -37,9 +37,9 @@ namespace Net_Core_Server.Controllers
                 return BadRequest("Oops. Make sure your body contains a string with your username and your Content - Type is Content - Type:application / json");
             }
 
-            return await dataAccess.ContainsUsername(jsonString)
+            return await _dataAccess.ContainsUsername(jsonString)
                 ? Forbid("Oops. This username is already in use. Please try again with a new username.")
-                : (ActionResult<string>)Ok(await dataAccess.Add(jsonString));
+                : (ActionResult<string>)Ok(await _dataAccess.Add(jsonString));
         }
 
         [HttpDelete("RemoveUser")]
@@ -53,7 +53,7 @@ namespace Net_Core_Server.Controllers
                 var apiKeyString = Request.Headers["ApiKey"].ToString();
                 var apiKey = Guid.Parse(apiKeyString);
 
-                return Ok(await dataAccess.Remove(apiKey));
+                return Ok(await _dataAccess.Remove(apiKey));
             }
             return Ok(false);
         }
@@ -67,7 +67,7 @@ namespace Net_Core_Server.Controllers
 
             if (role == Role.Admin || role == Role.User)
             {
-                return await dataAccess.ChangeRole(username, role)
+                return await _dataAccess.ChangeRole(username, role)
                     ? Ok("DONE")
                     : (ActionResult<string>)BadRequest("NOT DONE: Username does not exist");
             }

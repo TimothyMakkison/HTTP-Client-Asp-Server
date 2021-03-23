@@ -22,11 +22,8 @@ namespace Net_Core_Server
         {
             services.AddDbContext<UserContext>(opt =>
                opt.UseInMemoryDatabase("UserList"));
-            //services.AddMvc(options =>
-            //{
-            //    options.AllowEmptyInputInBodyModelBinding = true;
-            //    options.Filters.Add(new Filters.AuthFilter());
-            //});
+           
+            services.AddScoped<IUserDataAccess, UserDataAccess>();
             services.AddControllers();
             services.AddMvcCore()
                 .AddNewtonsoftJson();

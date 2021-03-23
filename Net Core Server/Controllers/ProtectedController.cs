@@ -14,18 +14,18 @@ namespace Net_Core_Server.Controllers
     [ApiController]
     public class ProtectedController : ControllerBase
     {
-        private readonly IUserDataAccess dataAccess;
+        private readonly IUserDataAccess _dataAccess;
 
-        public ProtectedController(UserContext context)
+        public ProtectedController(IUserDataAccess dataAccess)
         {
-            dataAccess = new UserDataAccess(context);
+            _dataAccess = dataAccess;
         }
 
         [HttpGet("hello")]
         public async Task<ActionResult<string>> GetHello()
         {
             var guid = Guid.Parse(Request.Headers["ApiKey"]);
-            var user = await dataAccess.TryGet(guid);
+            var user = await _dataAccess.TryGet(guid);
             return Ok($"Hello {user.UserName}");
         }
 
