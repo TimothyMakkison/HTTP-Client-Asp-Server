@@ -1,6 +1,6 @@
 ﻿using CSharpx;
-using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models;
+using Client.Infrastructure;
+using Client.Models;
 using RailwaySharp;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Reflection;
 /// From https://github.com/commandlineparser/commandline
 /// https://github.com/commandlineparser/commandline/blob/master/src/CommandLine/Core/TypeConverter.cs
 /// </summary>
-namespace HTTP_Client_Asp_Server.ConsoleClass
+namespace Client.ConsoleClass
 {
     public static class TypeConverter
     {

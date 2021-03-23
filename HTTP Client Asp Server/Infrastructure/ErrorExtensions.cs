@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HTTP_Client_Asp_Server.Infrastructure
+namespace Client.Infrastructure
 {
     public static class ErrorExtensions
     {

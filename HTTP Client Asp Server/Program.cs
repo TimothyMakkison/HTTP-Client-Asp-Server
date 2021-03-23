@@ -1,12 +1,12 @@
-﻿using HTTP_Client_Asp_Server.ConsoleClass;
-using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models;
-using HTTP_Client_Asp_Server.Senders;
+﻿using Client.ConsoleClass;
+using Client.Infrastructure;
+using Client.Models;
+using Client.Senders;
 using StructureMap;
 using System;
 using System.Net.Http;
 
-namespace HTTP_Client_Asp_Server
+namespace Client
 {
     internal class Program
     {

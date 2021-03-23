@@ -1,13 +1,13 @@
 ﻿using CSharpx;
-using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models;
+using Client.Infrastructure;
+using Client.Models;
 using StructureMap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace HTTP_Client_Asp_Server.ConsoleClass
+namespace Client.ConsoleClass
 {
     public class CommandLineBuilder : IBuilder
     {

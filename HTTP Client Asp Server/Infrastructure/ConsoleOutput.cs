@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HTTP_Client_Asp_Server.Infrastructure
+namespace Client.Infrastructure
 {
     public class ConsoleOutput : ILogger
     {

@@ -1,8 +1,8 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using Client.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace HTTP_Client_Asp_Server.Senders
+namespace Client.Senders
 {
     public interface IAuthenticatedSender : ISender
     {

@@ -1,4 +1,4 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using Client.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace HTTP_Client_Asp_Server.Infrastructure
+namespace Client.Infrastructure
 {
     public static class ReflectionExtensions
     {

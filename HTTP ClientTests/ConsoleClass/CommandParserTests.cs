@@ -1,16 +1,16 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using Client.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HTTP_Client_Asp_Server.ConsoleClass.Tests
+namespace Client.ConsoleClass.Tests
 {
     [TestClass()]
     public class CommandParserTests
     {
-        [TestMethod()]
-        public void ParseTest1()
-        {
-            var cd = new CommandData() { CommandKey = "Command" };
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void ParseTest1()
+        //{
+        //    var cd = new CommandData() { CommandKey = "Command" };
+        //    Assert.Fail();
+        //}
     }
 }
