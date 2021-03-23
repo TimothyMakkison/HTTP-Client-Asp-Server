@@ -38,21 +38,18 @@ namespace Client.ConsoleClass
         private static Maybe<object> ChangeTypeSequence(IEnumerable<string> values, Type conversionType, CultureInfo conversionCulture, bool ignoreValueCase)
         {
             var type = conversionType.GetTypeInfo()
-                              .GetGenericArguments()
-                              .SingleOrDefault()
+                              .GetGenericArguments().SingleOrDefault()
                               .ToMaybe()
                               .FromJustOrFail(
-                                  new InvalidOperationException("Non scalar properties should be sequence of type IEnumerable<T>.")
-                    );
+                                  new InvalidOperationException("Non scalar properties should be sequence of type IEnumerable<T>."));
 
             var converted = values.Select(value => ChangeTypeScalar(value, type, conversionCulture, ignoreValueCase))
                                   .ToArray();
 
-            var a = converted.Any(a => a.MatchNothing())
+            return converted.Any(a => a.MatchNothing())
                 ? Maybe.Nothing<object>()
                 : Maybe.Just(converted.Select(c => ((Just<object>)c).Value)
                 .ToUntypedArray(type));
-            return a;
         }
 
         private static Maybe<object> ChangeTypeScalar(string value, Type conversionType, CultureInfo conversionCulture, bool ignoreValueCase)

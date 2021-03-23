@@ -8,7 +8,7 @@ namespace Net_Core_Server.Encryption
 {
     public static class CryptoServices
     {
-        public static RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+        public readonly static RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
 
         public static string RsaPublicKey => RSA.ToXmlString(false);
 

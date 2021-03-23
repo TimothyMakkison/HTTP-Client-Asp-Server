@@ -1,5 +1,4 @@
-﻿using Client.Infrastructure;
-using Client.Models;
+﻿using Client.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +9,7 @@ namespace Client.Senders
     public class TalkBack
     {
         private readonly ISender sender;
+
         public TalkBack(ISender sender)
         {
             this.sender = sender;
@@ -19,20 +19,21 @@ namespace Client.Senders
         public async Task<string> Hello()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
+
             HttpResponseMessage response = await sender.SendAsync(request);
+
             return await sender.GetResponseString(response);
         }
 
         [Command("TalkBack Sort")]
-        public string Process(IEnumerable<int> parameters)
+        public async Task<string> SortIntAsync(IEnumerable<int> parameters)
         {
             string uri = BuildQuery(parameters);
-
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            HttpResponseMessage response = sender.SendAsync(request).Result;
-            var product = response.Content.ReadAsStringAsync().Result;
 
-            return product;
+            HttpResponseMessage response = await sender.SendAsync(request);
+
+            return await response.Content.ReadAsStringAsync();
         }
 
         private static string BuildQuery(IEnumerable<int> parameters)
