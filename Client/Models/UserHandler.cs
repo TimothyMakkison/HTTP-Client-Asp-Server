@@ -1,4 +1,4 @@
-﻿namespace HTTP_Client_Asp_Server.Models
+﻿namespace Client.Models
 {
     /// <summary>
     /// Responsible for determining if User has had its values assigned.

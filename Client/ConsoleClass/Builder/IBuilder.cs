@@ -1,8 +1,8 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using Client.Models;
 using StructureMap;
 using System;
 
-namespace HTTP_Client_Asp_Server.ConsoleClass
+namespace Client.ConsoleClass
 {
     public interface IBuilder
     {

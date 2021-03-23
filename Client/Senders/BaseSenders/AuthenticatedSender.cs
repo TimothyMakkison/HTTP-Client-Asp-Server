@@ -1,10 +1,9 @@
-﻿using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models;
-using System;
+﻿using Client.Infrastructure;
+using Client.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace HTTP_Client_Asp_Server.Senders
+namespace Client.Senders
 {
     public class AuthenticatedSender : Sender, IAuthenticatedSender
     {

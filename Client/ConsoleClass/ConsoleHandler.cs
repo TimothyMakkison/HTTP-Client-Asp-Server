@@ -1,8 +1,8 @@
-﻿using HTTP_Client_Asp_Server.Infrastructure;
+﻿using Client.Infrastructure;
 using RailwaySharp;
 using System;
 
-namespace HTTP_Client_Asp_Server.ConsoleClass
+namespace Client.ConsoleClass
 {
     public class ConsoleHandler
     {

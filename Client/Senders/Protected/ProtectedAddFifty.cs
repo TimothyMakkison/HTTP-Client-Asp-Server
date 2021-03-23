@@ -1,5 +1,5 @@
-﻿using HTTP_Client_Asp_Server.Infrastructure;
-using HTTP_Client_Asp_Server.Models;
+﻿using Client.Infrastructure;
+using Client.Models;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HTTP_Client_Asp_Server.Senders
+namespace Client.Senders
 {
     public class ProtectedAddFifty
     {

@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace HTTP_Client_Asp_Server.Senders
+namespace Client.Senders
 {
     public interface ISender
     {

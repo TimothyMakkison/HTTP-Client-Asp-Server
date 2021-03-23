@@ -1,8 +1,8 @@
-﻿using HTTP_Client_Asp_Server.Infrastructure;
+﻿using Client.Infrastructure;
 using System;
 using System.Reflection;
 
-namespace HTTP_Client_Asp_Server.Models
+namespace Client.Models
 {
     public enum TargetType
     {

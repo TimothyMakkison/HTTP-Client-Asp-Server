@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace HTTP_Client_Asp_Server.ConsoleClass
+namespace Client.ConsoleClass
 {
     public interface IAssemblyScanner
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HTTP_Client_Asp_Server.Models
+namespace Client.Models
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class CommandAttribute : Attribute, ICommandData

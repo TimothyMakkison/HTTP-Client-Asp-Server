@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace HTTP_Client_Asp_Server.Infrastructure
+namespace Client.Infrastructure
 {
     public static class CryptoHelper
     {
