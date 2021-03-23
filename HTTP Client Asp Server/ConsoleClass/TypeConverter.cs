@@ -16,7 +16,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 {
     public static class TypeConverter
     {
-        public static IEnumerable<Result<object, string>> ConvertTuples(this List<Tuple<Specification, IEnumerable<string>>> tuples)
+        public static IEnumerable<Result<object, string>> ConvertTuples(this IEnumerable<Tuple<Specification, IEnumerable<string>>> tuples)
         {
             return tuples.Select((pair) => ChangeType(pair.Item2,
                                     pair.Item1.ConversionType,
@@ -37,8 +37,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 
         private static Maybe<object> ChangeTypeSequence(IEnumerable<string> values, Type conversionType, CultureInfo conversionCulture, bool ignoreValueCase)
         {
-            var type =
-                conversionType.GetTypeInfo()
+            var type = conversionType.GetTypeInfo()
                               .GetGenericArguments()
                               .SingleOrDefault()
                               .ToMaybe()
@@ -51,7 +50,8 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
 
             var a = converted.Any(a => a.MatchNothing())
                 ? Maybe.Nothing<object>()
-                : Maybe.Just(converted.Select(c => ((Just<object>)c).Value).ToUntypedArray(type));
+                : Maybe.Just(converted.Select(c => ((Just<object>)c).Value)
+                .ToUntypedArray(type));
             return a;
         }
 
