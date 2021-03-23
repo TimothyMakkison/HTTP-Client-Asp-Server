@@ -1,6 +1,5 @@
 ﻿using HTTP_Client_Asp_Server.Infrastructure;
 using HTTP_Client_Asp_Server.Models;
-using System;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,42 +7,53 @@ using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
-    public class ProtectedSignMessage : AuthenticatedSender
+    public class ProtectedSignMessage
     {
-        private CryptoKey ServerPublicKey { get; set; }
+        private readonly ILogger _output;
+        private readonly CryptoKey _serverPublicKey;
+        private readonly IAuthenticatedSender _sender;
 
-        public ProtectedSignMessage(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
+        public ProtectedSignMessage(ILogger output, CryptoKey cryptoKey, IAuthenticatedSender sender)
         {
-            ServerPublicKey = cryptoKey;
+            _output = output;
+            _serverPublicKey = cryptoKey;
+            _sender = sender;
         }
 
         [Command("Protected Sign")]
         public async Task Process(string value)
         {
-            if (!HasKey() || !UserCheck())
+            if (!HasKey())
+            {
+                return;
+            }
+
+            if (!_sender.UserCheck())
             {
                 return;
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"protected/sign?message={value}");
-            var response = await SendAuthenticatedAsync(request);
+            var response = _sender.SendAuthenticatedAsync(request);
 
             // Hash while waiting for server response
             var hashedValue = Hash(value);
 
             // Convert hex string to byte array;
-            var hexadecimal = GetResponseString(response).Result;
+            var hexadecimal = await _sender.GetResponseString(await response);
             var signatureHash = CryptoHelper.HexToByte(hexadecimal);
             bool validSignature = VerifyHash(hashedValue, signatureHash);
 
-            string outcome = validSignature ? "Message was successfully signed" : "Message was not successfully signed";
-            Console.WriteLine(outcome);
+            string outcome = validSignature
+                ? "Message was successfully signed"
+                : "Message was not successfully signed";
+            _output.Log(outcome);
         }
 
         private bool VerifyHash(byte[] hash, byte[] signature)
         {
             using var rsa = new RSACryptoServiceProvider();
-            rsa.FromXmlString(ServerPublicKey.Value);
+            rsa.FromXmlString(_serverPublicKey.Value);
             return rsa.VerifyHash(hash, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
         }
 
@@ -56,10 +66,10 @@ namespace HTTP_Client_Asp_Server.Senders
 
         private bool HasKey()
         {
-            if (ServerPublicKey.Assigned)
+            if (_serverPublicKey.Assigned)
                 return true;
 
-            Console.WriteLine("Client doesn’t yet have the public key");
+            _output.Log("Client doesn’t yet have the public key", LogType.Warning);
             return false;
         }
     }

@@ -14,6 +14,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
         public CommandLineHandler(IEnumerable<CommandModel> commands)
         {
             Commands = commands;
+            Commands.ToList().ForEach(x => System.Console.WriteLine(x.Data.CommandKey));
         }
 
         public Result<object,string> Process(string input)

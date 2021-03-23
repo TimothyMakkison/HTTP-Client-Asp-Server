@@ -12,7 +12,7 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
     public class CommandLineBuilder : IBuilder
     {
         public List<CommandModel> commandModels = new List<CommandModel>();
-        private List<IAssemblyScanner> scanners = new List<IAssemblyScanner>();
+        private readonly List<IAssemblyScanner> scanners = new List<IAssemblyScanner>();
         private Container container;
 
         public IBuilder AddCommand(CommandModel command)
@@ -53,12 +53,12 @@ namespace HTTP_Client_Asp_Server.ConsoleClass
             // Scan instance and get all valid (Class Type, IEnumerable<MethodInfo>) pairs
             // Create IEnumerable<(object, MethodInfo)> pairs
             // Convert pairs into Delegates
-            var dels = scanners.SelectMany(s => s.ScanAssembly())
+            var delegateCollection = scanners.SelectMany(s => s.ScanAssembly())
                                .SelectMany(p => p.methods,
                                (p, method) => (@class: container.GetInstance(p.type), method))
                                .Select(p => p.method.CreateDelegate(p.@class));
 
-            var commands = dels.Select(func => new CommandModel(func.GetMethodInfo()
+            var commands = delegateCollection.Select(func => new CommandModel(func.GetMethodInfo()
                                                                     .GetCustomAttribute<CommandAttribute>(), func));
             commandModels.AddRange(commands);
         }

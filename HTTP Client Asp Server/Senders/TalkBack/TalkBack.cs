@@ -1,14 +1,26 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
-    public class TalkBackSort : BaseSender
+    public class TalkBack
     {
-        public TalkBackSort(HttpClient client) : base(client)
+        private readonly ISender sender;
+        public TalkBack(ISender sender)
         {
+            this.sender = sender;
+        }
+
+        [Command("TalkBack Hello")]
+        public async Task<string> Hello()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "talkback/hello");
+            HttpResponseMessage response = await sender.SendAsync(request);
+            return await sender.GetResponseString(response);
         }
 
         [Command("TalkBack Sort")]
@@ -17,7 +29,7 @@ namespace HTTP_Client_Asp_Server.Senders
             string uri = BuildQuery(parameters);
 
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            HttpResponseMessage response = SendAsync(request).Result;
+            HttpResponseMessage response = sender.SendAsync(request).Result;
             var product = response.Content.ReadAsStringAsync().Result;
 
             return product;

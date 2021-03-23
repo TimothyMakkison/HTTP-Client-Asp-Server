@@ -1,32 +1,34 @@
-﻿using System;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
-    public abstract class BaseSender
+    public class Sender : ISender
     {
         protected HttpClient Client;
+        protected ILogger Output;
 
-        public BaseSender(HttpClient client)
+        public Sender(HttpClient client, ILogger output)
         {
             this.Client = client;
+            this.Output = output;
         }
 
-        protected async virtual Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
             var result = Client.SendAsync(request);
-            Console.WriteLine("...please wait...");
+            Output.Log("...please wait...");
             return await result;
         }
 
-        protected async virtual Task<string> GetResponseString(HttpResponseMessage response)
+        public async Task<string> GetResponseString(HttpResponseMessage response)
         {
             return await response.Content.ReadAsStringAsync();
         }
 
-        protected virtual HttpContent ToHttpContent(object item)
+        public HttpContent ToHttpContent(object item)
         {
             var stringContent = Newtonsoft.Json.JsonConvert.SerializeObject(item);
             return new StringContent(stringContent, Encoding.UTF8, "application/json");

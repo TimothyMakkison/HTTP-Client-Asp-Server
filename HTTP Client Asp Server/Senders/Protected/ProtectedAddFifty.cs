@@ -9,50 +9,49 @@ using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
-    public class ProtectedAddFifty : AuthenticatedSender
+    public class ProtectedAddFifty
     {
-        private CryptoKey ServerPublicKey { get; set; }
+        private readonly ILogger _output;
+        private readonly CryptoKey _serverPublicKey;
+        private readonly IAuthenticatedSender _sender;
 
-        public ProtectedAddFifty(HttpClient client, UserHandler userHandler, CryptoKey cryptoKey) : base(client, userHandler)
+        public ProtectedAddFifty(ILogger output, CryptoKey cryptoKey, IAuthenticatedSender sender)
         {
-            ServerPublicKey = cryptoKey;
+            _output = output;
+            _serverPublicKey = cryptoKey;
+            _sender = sender;
         }
 
         [Command("Protected AddFifty")]
-        public async Task Process(string value)
+        public async Task Process(int value)
         {
+            //TODO change value to int and allow auto converter to handle.
             if (!HasKey())
             {
                 return;
             }
 
-            if (!int.TryParse(value, out int _))
-            {
-                Console.WriteLine("A valid integer must be given!");
-                return;
-            }
-
             using Aes aes = Aes.Create();
             var request = GenerateWebRequest(value, aes);
-            HttpResponseMessage response = await SendAuthenticatedAsync(request);
+            HttpResponseMessage response = await _sender.SendAuthenticatedAsync(request);
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode is not HttpStatusCode.OK)
             {
-                Console.WriteLine("An error occurred!");
+                _output.Log("An error occurred!", LogType.Warning);
                 return;
             }
 
             string decrypted = await Decrypt(response, aes);
-            Console.WriteLine(decrypted);
+            _output.Print(decrypted);
         }
 
-        private HttpRequestMessage GenerateWebRequest(string value, Aes Aes)
+        private HttpRequestMessage GenerateWebRequest(int value, Aes Aes)
         {
             using var rsa = new RSACryptoServiceProvider();
-            rsa.FromXmlString(ServerPublicKey.Value);
+            rsa.FromXmlString(_serverPublicKey.Value);
 
-            // Convert value to bytes then
-            byte[] valueBytes = Encoding.UTF8.GetBytes(value);
+            // Convert value to bytes then add to uri
+            byte[] valueBytes = Encoding.UTF8.GetBytes(value.ToString());
             string encryptValue = toEncryptedHex(valueBytes);
             string encryptKey = toEncryptedHex(Aes.Key);
             string encryptIV = toEncryptedHex(Aes.IV);
@@ -69,17 +68,17 @@ namespace HTTP_Client_Asp_Server.Senders
 
         private async Task<string> Decrypt(HttpResponseMessage response, Aes aes)
         {
-            var encryptedHex = await GetResponseString(response);
+            var encryptedHex = await _sender.GetResponseString(response);
             var encryptedBytes = encryptedHex.HexToByte();
             return CryptoHelper.AesDecrypt(encryptedBytes, aes.Key, aes.IV);
         }
 
         private bool HasKey()
         {
-            if (ServerPublicKey.Assigned)
+            if (_serverPublicKey.Assigned)
                 return true;
 
-            Console.WriteLine("Client doesn’t yet have the public key");
+            _output.Log("Client doesn’t yet have the public key", LogType.Warning);
             return false;
         }
     }

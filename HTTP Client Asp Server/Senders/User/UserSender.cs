@@ -1,25 +1,30 @@
-﻿using HTTP_Client_Asp_Server.Models;
+﻿using HTTP_Client_Asp_Server.Infrastructure;
+using HTTP_Client_Asp_Server.Models;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace HTTP_Client_Asp_Server.Senders
 {
-    public class UserSender : AuthenticatedSender
+    public class UserSender
     {
-        public UserSender(HttpClient client, UserHandler userHandler) : base(client, userHandler)
+        private readonly IAuthenticatedSender _sender;
+        private readonly ILogger _output;
+
+        public UserSender(IAuthenticatedSender sender, ILogger output)
         {
+            _sender = sender;
+            _output = output;
         }
 
         [Command("User Get")]
         public async Task<string> GetUser(string line)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"user/new?username={line}");
-            var response = await SendAsync(request);
-            var product = await GetResponseString(response);
+            var response = await _sender.SendAsync(request);
+            var product = await _sender.GetResponseString(response);
             return product;
         }
 
@@ -28,82 +33,68 @@ namespace HTTP_Client_Asp_Server.Senders
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "user/new")
             {
-                Content = ToHttpContent(name)
+                Content = _sender.ToHttpContent(name)
             };
 
-            HttpResponseMessage response = await SendAsync(request);
-            var product = GetResponseString(response).Result;
+            HttpResponseMessage response = await _sender.SendAsync(request);
+            var product = await _sender.GetResponseString(response);
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode is not HttpStatusCode.OK)
             {
                 return product;
             }
 
             var jObject = JObject.Parse(product);
-            var user = new User() { Username = jObject["userName"].Value<string>(), ApiKey = jObject["apiKey"].Value<string>() };
-            UserHandler.Set(user);
-            Console.WriteLine("Got API Key");
+
+            var user = new User()
+            {
+                Username = jObject["userName"].Value<string>(),
+                ApiKey = Guid.Parse(jObject["apiKey"].Value<string>())
+            };
+
+            _sender.UserHandler.Set(user);
+            _output.Log("Got API Key");
             return user.ToString();
         }
 
         [Command("User Set")]
-        public void UserSet(string line)
+        public string UserSet(string name, Guid guid)
         {
-            // Input should be in the form "User Set <username> <apikey>"
-            var parts = line.Split(' ');
-
-            if (parts.Length < 2)
-            {
-                Console.WriteLine("Invalid input, must contain a valid username and Guid");
-                return;
-            }
-
-            var user = new User() { Username = string.Join(" ", parts.Take(parts.Length - 1)), ApiKey = parts.LastOrDefault() };
-            UserHandler.Set(user);
-            Console.WriteLine("Stored");
+            var user = new User() { Username = name, ApiKey = guid };
+            _sender.UserHandler.Set(user);
+            return $"Stored {user}";
         }
 
         [Command("User Delete")]
         public async Task DeleteUser()
         {
-            if (!UserCheck())
+            if (!_sender.UserCheck())
             {
                 return;
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={UserHandler.Value.Username}");
-            var response = await SendAuthenticatedAsync(request);
-            var product = await GetResponseString(response);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"user/removeuser?username={_sender.UserHandler.Value.Username}");
+            var response = await _sender.SendAuthenticatedAsync(request);
+            var product = await _sender.GetResponseString(response);
             var success = Convert.ToBoolean(product);
-            Console.WriteLine(success);
+            _output.Log(success.ToString());
         }
 
         [Command("User Role")]
-        public void ChangeRole(string line)
+        public async Task ChangeRole(string username, string role)
         {
-            var parts = line.Split(' ');
-
-            if (parts.Length <= 1)
-            {
-                Console.WriteLine("Invalid input, must contain a valid username and role");
-                return;
-            }
-
-            var role = parts.LastOrDefault();
-            var username = string.Join(" ", parts.Take(parts.Length - 1));
-
-            if (!UserCheck())
+            if (!_sender.UserCheck())
             {
                 return;
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, "user/changerole")
             {
-                Content = ToHttpContent(new { username, role })
+                Content = _sender.ToHttpContent(new { username, role })
             };
 
-            var response = SendAuthenticatedAsync(request).Result;
-            Console.WriteLine(GetResponseString(response).Result);
+            var response = await _sender.SendAuthenticatedAsync(request);
+            _output.Log(await _sender.GetResponseString(response));
         }
     }
 }
