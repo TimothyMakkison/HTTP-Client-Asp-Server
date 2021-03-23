@@ -12,12 +12,8 @@ namespace HTTP_Client_Asp_Server
     {
         private static void Main()
         {
-            const string address = @"https://localhost:44391/api/";
-            var consoleOutput = new ConsoleOutput();
-
-            CommandLineHandler handler = BuildHandler(address, consoleOutput);
-
-            var console = new ConsoleHandler(handler, consoleOutput);
+            string address = @"https://localhost:44391/api/";
+            var console = new ConsoleHandler(new CommandLineHandler(address));
             console.Run();
         }
 
