@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Net_Core_ServerTests.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +22,8 @@ namespace Net_Core_Server.Controllers.Tests
             var result = _talkBackController.GetHello();
             var responseString = ResultExtensions.OKResponseToType(result);
 
-            Assert.True(result.Result is OkObjectResult);
-            Assert.Equal("Hello World", responseString);
+            result.Result.Should().BeOfType<OkObjectResult>();
+            responseString.Should().BeEquivalentTo("Hello World");
         }
 
         [Theory]
@@ -39,8 +40,8 @@ namespace Net_Core_Server.Controllers.Tests
             var ok = response.Result as OkObjectResult;
             var returnedIntegers = ok.Value as IEnumerable<int>;
 
-            Assert.True(response.Result is OkObjectResult);
-            Assert.Equal(returnedIntegers, sortedIntegers);
+            response.Result.Should().BeOfType<OkObjectResult>();
+            returnedIntegers.Should().BeEquivalentTo(sortedIntegers);
         }
 
         [Fact]
@@ -48,7 +49,7 @@ namespace Net_Core_Server.Controllers.Tests
         {
             var result = _talkBackController.GetSort(null);
 
-            Assert.True(result.Result is BadRequestObjectResult);
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
     }
 }
