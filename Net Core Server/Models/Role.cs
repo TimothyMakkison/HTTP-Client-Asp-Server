@@ -1,8 +1,7 @@
-﻿namespace Net_Core_Server.Models
+﻿namespace Net_Core_Server.Models;
+
+public static class Role
 {
-    public static class Role
-    {
-        public const string Admin = "Admin";
-        public const string User = "User";
-    }
+    public const string Admin = "Admin";
+    public const string User = "User";
 }

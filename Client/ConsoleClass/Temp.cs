@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.ConsoleClass
+namespace Client.ConsoleClass;
+
+class Temp
 {
-    class Temp
-    {
-    }
 }

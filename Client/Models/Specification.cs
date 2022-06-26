@@ -2,34 +2,33 @@
 using System;
 using System.Reflection;
 
-namespace Client.Models
+namespace Client.Models;
+
+public enum TargetType
 {
-    public enum TargetType
+    Switch,
+    Scalar,
+    Sequence
+}
+
+public class Specification
+{
+    private readonly Type conversionType;
+    private readonly TargetType targetType;
+
+    public Specification(Type conversionType, TargetType targetType)
     {
-        Switch,
-        Scalar,
-        Sequence
+        this.conversionType = conversionType;
+        this.targetType = targetType;
     }
 
-    public class Specification
+    public Type ConversionType => conversionType;
+
+    public TargetType TargetType => targetType;
+
+    public static Specification FromPropertyInfo(ParameterInfo info)
     {
-        private readonly Type conversionType;
-        private readonly TargetType targetType;
-
-        public Specification(Type conversionType, TargetType targetType)
-        {
-            this.conversionType = conversionType;
-            this.targetType = targetType;
-        }
-
-        public Type ConversionType => conversionType;
-
-        public TargetType TargetType => targetType;
-
-        public static Specification FromPropertyInfo(ParameterInfo info)
-        {
-            var type = info.ParameterType;
-            return new Specification(type, type.ToTargetType());
-        }
+        var type = info.ParameterType;
+        return new Specification(type, type.ToTargetType());
     }
 }

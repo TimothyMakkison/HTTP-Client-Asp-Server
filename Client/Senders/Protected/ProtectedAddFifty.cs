@@ -7,79 +7,78 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Senders
+namespace Client.Senders;
+
+public class ProtectedAddFifty
 {
-    public class ProtectedAddFifty
+    private readonly ILogger _output;
+    private readonly CryptoKey _serverPublicKey;
+    private readonly IAuthenticatedSender _sender;
+
+    public ProtectedAddFifty(ILogger output, CryptoKey cryptoKey, IAuthenticatedSender sender)
     {
-        private readonly ILogger _output;
-        private readonly CryptoKey _serverPublicKey;
-        private readonly IAuthenticatedSender _sender;
+        _output = output;
+        _serverPublicKey = cryptoKey;
+        _sender = sender;
+    }
 
-        public ProtectedAddFifty(ILogger output, CryptoKey cryptoKey, IAuthenticatedSender sender)
+    [Command("Protected AddFifty")]
+    public async Task Process(int value)
+    {
+        //TODO change value to int and allow auto converter to handle.
+        if (!HasKey())
         {
-            _output = output;
-            _serverPublicKey = cryptoKey;
-            _sender = sender;
+            return;
         }
 
-        [Command("Protected AddFifty")]
-        public async Task Process(int value)
+        using Aes aes = Aes.Create();
+        var request = GenerateWebRequest(value, aes);
+        HttpResponseMessage response = await _sender.SendAuthenticatedAsync(request);
+
+        if (response.StatusCode is not HttpStatusCode.OK)
         {
-            //TODO change value to int and allow auto converter to handle.
-            if (!HasKey())
-            {
-                return;
-            }
-
-            using Aes aes = Aes.Create();
-            var request = GenerateWebRequest(value, aes);
-            HttpResponseMessage response = await _sender.SendAuthenticatedAsync(request);
-
-            if (response.StatusCode is not HttpStatusCode.OK)
-            {
-                _output.Log("An error occurred!", LogType.Warning);
-                return;
-            }
-
-            string decrypted = await Decrypt(response, aes);
-            _output.Print(decrypted);
+            _output.Log("An error occurred!", LogType.Warning);
+            return;
         }
 
-        private HttpRequestMessage GenerateWebRequest(int value, Aes Aes)
+        string decrypted = await Decrypt(response, aes);
+        _output.Print(decrypted);
+    }
+
+    private HttpRequestMessage GenerateWebRequest(int value, Aes Aes)
+    {
+        using var rsa = new RSACryptoServiceProvider();
+        rsa.FromXmlString(_serverPublicKey.Value);
+
+        // Convert value to bytes then add to uri
+        byte[] valueBytes = Encoding.UTF8.GetBytes(value.ToString());
+        string encryptValue = toEncryptedHex(valueBytes);
+        string encryptKey = toEncryptedHex(Aes.Key);
+        string encryptIV = toEncryptedHex(Aes.IV);
+
+        return new HttpRequestMessage(HttpMethod.Get, $"protected/addfifty?encryptedInteger={encryptValue}" +
+            $"&encryptedSymKey={encryptKey}&encryptedIV={encryptIV}");
+
+        string toEncryptedHex(byte[] input)
         {
-            using var rsa = new RSACryptoServiceProvider();
-            rsa.FromXmlString(_serverPublicKey.Value);
-
-            // Convert value to bytes then add to uri
-            byte[] valueBytes = Encoding.UTF8.GetBytes(value.ToString());
-            string encryptValue = toEncryptedHex(valueBytes);
-            string encryptKey = toEncryptedHex(Aes.Key);
-            string encryptIV = toEncryptedHex(Aes.IV);
-
-            return new HttpRequestMessage(HttpMethod.Get, $"protected/addfifty?encryptedInteger={encryptValue}" +
-                $"&encryptedSymKey={encryptKey}&encryptedIV={encryptIV}");
-
-            string toEncryptedHex(byte[] input)
-            {
-                byte[] encrypted = rsa.Encrypt(input, true);
-                return BitConverter.ToString(encrypted);
-            }
+            byte[] encrypted = rsa.Encrypt(input, true);
+            return BitConverter.ToString(encrypted);
         }
+    }
 
-        private async Task<string> Decrypt(HttpResponseMessage response, Aes aes)
-        {
-            var encryptedHex = await _sender.GetResponseString(response);
-            var encryptedBytes = encryptedHex.HexToByte();
-            return CryptoHelper.AesDecrypt(encryptedBytes, aes.Key, aes.IV);
-        }
+    private async Task<string> Decrypt(HttpResponseMessage response, Aes aes)
+    {
+        var encryptedHex = await _sender.GetResponseString(response);
+        var encryptedBytes = encryptedHex.HexToByte();
+        return CryptoHelper.AesDecrypt(encryptedBytes, aes.Key, aes.IV);
+    }
 
-        private bool HasKey()
-        {
-            if (_serverPublicKey.Assigned)
-                return true;
+    private bool HasKey()
+    {
+        if (_serverPublicKey.Assigned)
+            return true;
 
-            _output.Log("Client doesn’t yet have the public key", LogType.Warning);
-            return false;
-        }
+        _output.Log("Client doesn’t yet have the public key", LogType.Warning);
+        return false;
     }
 }

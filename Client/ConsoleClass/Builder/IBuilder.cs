@@ -2,16 +2,15 @@
 using StructureMap;
 using System;
 
-namespace Client.ConsoleClass
+namespace Client.ConsoleClass;
+
+public interface IBuilder
 {
-    public interface IBuilder
-    {
-        public IBuilder AddCommand(CommandModel command);
+    public IBuilder AddCommand(CommandModel command);
 
-        public IBuilder SetContainer(Container container);
+    public IBuilder SetContainer(Container container);
 
-        public IBuilder Scan(Action<IAssemblyScanner> action);
+    public IBuilder Scan(Action<IAssemblyScanner> action);
 
-        public CommandLineHandler Build();
-    }
+    public CommandLineHandler Build();
 }

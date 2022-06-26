@@ -1,12 +1,11 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Client.Senders
+namespace Client.Senders;
+
+public interface ISender
 {
-    public interface ISender
-    {
-        Task<string> GetResponseString(HttpResponseMessage response);
-        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
-        HttpContent ToHttpContent(object item);
-    }
+    Task<string> GetResponseString(HttpResponseMessage response);
+    Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
+    HttpContent ToHttpContent(object item);
 }

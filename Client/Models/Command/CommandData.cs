@@ -1,7 +1,6 @@
-﻿namespace Client.Models
+﻿namespace Client.Models;
+
+public class CommandData : ICommandData
 {
-    public class CommandData : ICommandData
-    {
-        public string CommandKey { get; set; }
-    }
+    public string CommandKey { get; set; }
 }

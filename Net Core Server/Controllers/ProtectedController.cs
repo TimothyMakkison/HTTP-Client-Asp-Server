@@ -7,92 +7,91 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Net_Core_Server.Controllers
+namespace Net_Core_Server.Controllers;
+
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class ProtectedController : ControllerBase
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProtectedController : ControllerBase
+    private readonly IUserDataAccess _dataAccess;
+
+    public ProtectedController(IUserDataAccess dataAccess)
     {
-        private readonly IUserDataAccess _dataAccess;
+        _dataAccess = dataAccess;
+    }
 
-        public ProtectedController(IUserDataAccess dataAccess)
+    [HttpGet("hello")]
+    public async Task<ActionResult<string>> GetHello()
+    {
+        var guid = Guid.Parse(Request.Headers["ApiKey"]);
+        var user = await _dataAccess.TryGet(guid);
+        return Ok($"Hello {user.UserName}");
+    }
+
+    [HttpGet("sha1")]
+    public ActionResult<string> GetSha1([FromQuery] string message)
+    {
+        return message is null 
+            ? BadRequest("Bad Request") 
+            : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA1Managed()));
+    }
+
+    [HttpGet("sha256")]
+    public ActionResult<string> GetSha256([FromQuery] string message)
+    {
+        return message is null
+            ? BadRequest("Bad Request")
+            : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA256Managed()));
+    }
+
+    [HttpGet("getPublicKey")]
+    public ActionResult<string> GetPublicKey()
+    {
+        return Ok(CryptoServices.RsaPublicKey);
+    }
+
+    [HttpGet("sign")]
+    public ActionResult<string> GetSignValue([FromQuery] string message)
+    {
+        if (message is null)
         {
-            _dataAccess = dataAccess;
+            return BadRequest("Query must contain a value.");
+        }
+        var plaintextBytes = Encoding.UTF8.GetBytes(message);
+        var signedData = CryptoServices.RSA.SignData(plaintextBytes, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
+
+        var hexadecimal = BitConverter.ToString(signedData);
+        return Ok(hexadecimal);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("addFifty")]
+    public ActionResult<string> AddFifty([FromQuery] string encryptedInteger, string encryptedSymKey, string encryptedIV)
+    {
+        try
+        {
+            var symKey = DecryptHex(encryptedSymKey);
+            var IV = DecryptHex(encryptedIV);
+
+            var integerByteForm = DecryptHex(encryptedInteger);
+            var integerString = Encoding.Default.GetString(integerByteForm);
+            var integer = Convert.ToInt32(integerString);
+            var returnInt = integer + 50;
+
+            var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(), symKey, IV);
+            var returnString = BitConverter.ToString(returnEncrypted);
+            return Ok(returnString);
+        }
+        catch
+        {
+            return BadRequest("Bad Request");
         }
 
-        [HttpGet("hello")]
-        public async Task<ActionResult<string>> GetHello()
+        static byte[] DecryptHex(string hex)
         {
-            var guid = Guid.Parse(Request.Headers["ApiKey"]);
-            var user = await _dataAccess.TryGet(guid);
-            return Ok($"Hello {user.UserName}");
-        }
-
-        [HttpGet("sha1")]
-        public ActionResult<string> GetSha1([FromQuery] string message)
-        {
-            return message is null 
-                ? BadRequest("Bad Request") 
-                : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA1Managed()));
-        }
-
-        [HttpGet("sha256")]
-        public ActionResult<string> GetSha256([FromQuery] string message)
-        {
-            return message is null
-                ? BadRequest("Bad Request")
-                : (ActionResult<string>)Ok(CryptoServices.Hasher(message, new SHA256Managed()));
-        }
-
-        [HttpGet("getPublicKey")]
-        public ActionResult<string> GetPublicKey()
-        {
-            return Ok(CryptoServices.RsaPublicKey);
-        }
-
-        [HttpGet("sign")]
-        public ActionResult<string> GetSignValue([FromQuery] string message)
-        {
-            if (message is null)
-            {
-                return BadRequest("Query must contain a value.");
-            }
-            var plaintextBytes = Encoding.UTF8.GetBytes(message);
-            var signedData = CryptoServices.RSA.SignData(plaintextBytes, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
-
-            var hexadecimal = BitConverter.ToString(signedData);
-            return Ok(hexadecimal);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("addFifty")]
-        public ActionResult<string> AddFifty([FromQuery] string encryptedInteger, string encryptedSymKey, string encryptedIV)
-        {
-            try
-            {
-                var symKey = DecryptHex(encryptedSymKey);
-                var IV = DecryptHex(encryptedIV);
-
-                var integerByteForm = DecryptHex(encryptedInteger);
-                var integerString = Encoding.Default.GetString(integerByteForm);
-                var integer = Convert.ToInt32(integerString);
-                var returnInt = integer + 50;
-
-                var returnEncrypted = CryptoServices.AesEncrypt(returnInt.ToString(), symKey, IV);
-                var returnString = BitConverter.ToString(returnEncrypted);
-                return Ok(returnString);
-            }
-            catch
-            {
-                return BadRequest("Bad Request");
-            }
-
-            static byte[] DecryptHex(string hex)
-            {
-                var byteform = CryptoServices.HexToByte(hex);
-                return CryptoServices.RSA.Decrypt(byteform, true);
-            }
+            var byteform = CryptoServices.HexToByte(hex);
+            return CryptoServices.RSA.Decrypt(byteform, true);
         }
     }
 }

@@ -3,31 +3,30 @@ using Client.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Client.Senders
+namespace Client.Senders;
+
+public class AuthenticatedSender : Sender, IAuthenticatedSender
 {
-    public class AuthenticatedSender : Sender, IAuthenticatedSender
+    public UserHandler UserHandler { get; set; }
+
+    public AuthenticatedSender(HttpClient client, ILogger output, UserHandler userHandler) : base(client, output)
     {
-        public UserHandler UserHandler { get; set; }
+        UserHandler = userHandler;
+    }
 
-        public AuthenticatedSender(HttpClient client, ILogger output, UserHandler userHandler) : base(client, output)
+    public bool UserCheck()
+    {
+        if (UserHandler.Assigned)
         {
-            UserHandler = userHandler;
+            return true;
         }
+        Output.Log("You need to do a User Post or User Set first", LogType.Warning);
+        return false;
+    }
 
-        public bool UserCheck()
-        {
-            if (UserHandler.Assigned)
-            {
-                return true;
-            }
-            Output.Log("You need to do a User Post or User Set first", LogType.Warning);
-            return false;
-        }
-
-        public async Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request)
-        {
-            request.Headers.Add("ApiKey", UserHandler.Value.ApiKey.ToString());
-            return await SendAsync(request);
-        }
+    public async Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request)
+    {
+        request.Headers.Add("ApiKey", UserHandler.Value.ApiKey.ToString());
+        return await SendAsync(request);
     }
 }

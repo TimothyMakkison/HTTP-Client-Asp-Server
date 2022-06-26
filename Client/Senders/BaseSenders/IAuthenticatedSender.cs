@@ -2,12 +2,11 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Client.Senders
+namespace Client.Senders;
+
+public interface IAuthenticatedSender : ISender
 {
-    public interface IAuthenticatedSender : ISender
-    {
-        UserHandler UserHandler { get; set; }
-        Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request);
-        bool UserCheck();
-    }
+    UserHandler UserHandler { get; set; }
+    Task<HttpResponseMessage> SendAuthenticatedAsync(HttpRequestMessage request);
+    bool UserCheck();
 }

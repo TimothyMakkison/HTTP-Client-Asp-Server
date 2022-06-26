@@ -6,42 +6,41 @@ using StructureMap;
 using System;
 using System.Net.Http;
 
-namespace Client
+namespace Client;
+
+internal class Program
 {
-    internal class Program
+    private static void Main()
     {
-        private static void Main()
+        const string address = @"https://localhost:44391/api/";
+        var consoleOutput = new ConsoleOutput();
+
+        CommandLineHandler handler = BuildHandler(address, consoleOutput);
+
+        var console = new ConsoleHandler(handler, consoleOutput);
+        console.Run();
+    }
+
+    private static CommandLineHandler BuildHandler(string address, ConsoleOutput consoleOutput)
+    {
+        var client = new HttpClient
         {
-            const string address = @"https://localhost:44391/api/";
-            var consoleOutput = new ConsoleOutput();
+            BaseAddress = new Uri(address)
+        };
 
-            CommandLineHandler handler = BuildHandler(address, consoleOutput);
-
-            var console = new ConsoleHandler(handler, consoleOutput);
-            console.Run();
-        }
-
-        private static CommandLineHandler BuildHandler(string address, ConsoleOutput consoleOutput)
+        var container = new Container(_ =>
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri(address)
-            };
+            _.ForSingletonOf<HttpClient>().Use(client);
+            _.ForSingletonOf<UserHandler>();
+            _.ForSingletonOf<CryptoKey>();
+            _.ForSingletonOf<ILogger>().Use(consoleOutput);
+            _.For<IAuthenticatedSender>().Add<AuthenticatedSender>();
+            _.For<ISender>().Add<Sender>();
+        });
 
-            var container = new Container(_ =>
-            {
-                _.ForSingletonOf<HttpClient>().Use(client);
-                _.ForSingletonOf<UserHandler>();
-                _.ForSingletonOf<CryptoKey>();
-                _.ForSingletonOf<ILogger>().Use(consoleOutput);
-                _.For<IAuthenticatedSender>().Add<AuthenticatedSender>();
-                _.For<ISender>().Add<Sender>();
-            });
-
-            return new CommandLineBuilder()
-                .SetContainer(container)
-                .AddCommand(new CommandModel("exit", new Action(() => Environment.Exit(0))))
-                .Build();
-        }
+        return new CommandLineBuilder()
+            .SetContainer(container)
+            .AddCommand(new CommandModel("exit", new Action(() => Environment.Exit(0))))
+            .Build();
     }
 }

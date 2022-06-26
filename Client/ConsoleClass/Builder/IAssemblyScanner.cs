@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Client.ConsoleClass
+namespace Client.ConsoleClass;
+
+public interface IAssemblyScanner
 {
-    public interface IAssemblyScanner
-    {
-        IAssemblyScanner SetAssembly(Assembly assembly);
+    IAssemblyScanner SetAssembly(Assembly assembly);
 
-        IAssemblyScanner AddClassFilter(Func<Type, bool> filter);
+    IAssemblyScanner AddClassFilter(Func<Type, bool> filter);
 
-        IAssemblyScanner AddMethodFilter(Func<MethodInfo, bool> filter);
+    IAssemblyScanner AddMethodFilter(Func<MethodInfo, bool> filter);
 
-        public IEnumerable<(Type type, IEnumerable<MethodInfo> methods)> ScanAssembly();
-    }
+    public IEnumerable<(Type type, IEnumerable<MethodInfo> methods)> ScanAssembly();
 }

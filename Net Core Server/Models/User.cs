@@ -1,18 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Net_Core_Server.Models
+namespace Net_Core_Server.Models;
+
+public class User
 {
-    public class User
+    public User()
     {
-        public User()
-        {
-        }
-
-        [Key]
-        public Guid ApiKey { get; set; }
-
-        public string UserName { get; set; }
-        public string Role { get; set; }
     }
+
+    [Key]
+    public Guid ApiKey { get; init; }
+
+    public string UserName { get; init; }
+    public string Role { get; set; }
 }
