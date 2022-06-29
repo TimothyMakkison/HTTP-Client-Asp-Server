@@ -1,27 +1,33 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Net_Core_Server.Data;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace Net_Core_Server.Middleware;
 
-public class AuthMiddleware
+public class AuthMiddleware : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    private readonly RequestDelegate next;
+    private readonly UserContext userContext;
 
-    public AuthMiddleware(RequestDelegate next) => this.next = next;
-
-    public async Task InvokeAsync(HttpContext context, UserContext userContext)
+    public AuthMiddleware(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, UserContext userContext) : base(options, logger, encoder, clock)
     {
-        var dict = context.Request.Headers;
-        var apiKey = dict["ApiKey"].ToString();
+        this.userContext=userContext;
+    }
+
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        var apiKey = Request.Headers["ApiKey"].ToString();
 
         if (apiKey == "")
         {
-            await next(context);
-            return;
+            Response.StatusCode = 401;
+            return AuthenticateResult.Fail("Invalid Authorization Header");
         }
 
         var access = new UserDataAccess(userContext);
@@ -29,8 +35,8 @@ public class AuthMiddleware
 
         if (user is null)
         {
-            await next(context);
-            return;
+            Response.StatusCode = 401;
+            return AuthenticateResult.Fail("Invalid Authorization Header");
         }
 
         var claims = new List<Claim>
@@ -39,9 +45,8 @@ public class AuthMiddleware
             new Claim(ClaimTypes.Role, user.Role),
         };
         var identityClaim = new ClaimsIdentity(claims, "ApiKey");
+        var claimsPrincipal = new ClaimsPrincipal(identityClaim);
 
-        context.User.AddIdentity(identityClaim);
-
-        await next(context);
+        return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
     }
 }

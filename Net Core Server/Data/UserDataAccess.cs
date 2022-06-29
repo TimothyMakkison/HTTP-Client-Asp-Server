@@ -51,6 +51,7 @@ public class UserDataAccess : IUserDataAccess
         {
             return false;
         }
+
         user.Role = role;
         await _context.SaveChangesAsync();
         return true;

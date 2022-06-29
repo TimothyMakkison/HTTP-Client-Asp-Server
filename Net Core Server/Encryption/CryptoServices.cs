@@ -8,7 +8,7 @@ namespace Net_Core_Server.Encryption;
 
 public static class CryptoServices
 {
-    public readonly static RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+    public readonly static RSACryptoServiceProvider RSA = new();
 
     public static string RsaPublicKey => RSA.ToXmlString(false);
 
@@ -41,7 +41,7 @@ public static class CryptoServices
 
         using var msEncrypt = new MemoryStream();
         using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
-        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+        using (var swEncrypt = new StreamWriter(csEncrypt))
         {
             //Write all data to the stream.
             swEncrypt.Write(input);

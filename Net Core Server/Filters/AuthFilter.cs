@@ -13,7 +13,9 @@ public class AuthFilter : IAuthorizationFilter
         bool isAuthorized = CheckRolePermission(context.HttpContext.User, Roles);
 
         if (!isAuthorized)
+        {
             context.Result = new UnauthorizedObjectResult("Unauthorized. Admin access only.");
+        }
     }
 
     private bool CheckRolePermission(ClaimsPrincipal claims, string condition)
