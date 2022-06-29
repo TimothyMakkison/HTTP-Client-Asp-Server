@@ -45,8 +45,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapTalkBackEnpoints();
+app.MapTalkBackEndpoints();
 app.MapUserEndpoint();
+app.MapProtectedEndpoints();
 
 app.UseEndpoints(endpoints =>
 {
