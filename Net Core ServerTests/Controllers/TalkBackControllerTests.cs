@@ -28,7 +28,7 @@ public class TalkBackControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
-        content.Should().BeEquivalentTo("Hello World");
+        content.Should().Contain("Hello World");
     }
 
     [Theory]

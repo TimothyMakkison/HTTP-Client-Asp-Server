@@ -27,7 +27,7 @@ public class UserDataAccess : IUserDataAccess
         return await _context.Users.AnyAsync(user => user.UserName == username);
     }
 
-    public async Task<User> TryGet(Guid apiKey)
+    public async Task<User?> TryGet(Guid apiKey)
     {
         return await _context.Users.FirstOrDefaultAsync(user => user.ApiKey == apiKey);
     }

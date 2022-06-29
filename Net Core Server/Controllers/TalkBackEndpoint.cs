@@ -8,13 +8,11 @@ using System.Linq;
 
 namespace Net_Core_Server.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
 public static class TalkBackEndpoint
 {
-    public static IEndpointRouteBuilder MapTalkBackEnpoints(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapTalkBackEndpoints(this IEndpointRouteBuilder builder)
     {
-        builder.MapGet("api/talkback/hello", () => "Hello World").WithTags("TalkBack");
+        builder.MapGet("api/talkback/hello", () =>  Results.Ok("Hello World")).WithTags("TalkBack");
         builder.MapGet("api/talkback/sort", (QueryInteger integers) =>
         {
             if (integers is null)

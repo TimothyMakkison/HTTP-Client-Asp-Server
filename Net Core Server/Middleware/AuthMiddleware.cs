@@ -43,6 +43,7 @@ public class AuthMiddleware : AuthenticationHandler<AuthenticationSchemeOptions>
         {
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Role, user.Role),
+            new Claim(ClaimTypes.Hash, apiKey),
         };
         var identityClaim = new ClaimsIdentity(claims, "ApiKey");
         var claimsPrincipal = new ClaimsPrincipal(identityClaim);
