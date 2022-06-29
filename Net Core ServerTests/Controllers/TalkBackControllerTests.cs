@@ -1,54 +1,67 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Net_Core_ServerTests.Infrastructure;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Net_Core_Server.Controllers.Tests;
 
 public class TalkBackControllerTests
 {
-    private readonly TalkBackController _talkBackController;
+    private readonly WebApplicationFactory<Program> _factory;
 
     public TalkBackControllerTests()
     {
-        _talkBackController = new TalkBackController(); ;
+        _factory = new WebApplicationFactory<Program>();
     }
 
     [Fact]
-    public void TalkBackHelloReturnsOK()
+    public async Task TalkBackHelloReturnsOK()
     {
-        var result = _talkBackController.GetHello();
-        var responseString = ResultExtensions.OKResponseToType(result);
+        // Arrange
+        var client = _factory.CreateClient();
 
-        result.Result.Should().BeOfType<OkObjectResult>();
-        responseString.Should().BeEquivalentTo("Hello World");
+        // Act
+        var response = await client.GetAsync("api/talkback/hello");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().BeEquivalentTo("Hello World");
     }
 
     [Theory]
     [InlineData(new int[] { 1, 2, 4, 0 })]
     [InlineData(new int[] { 10 })]
     [InlineData(new int[] { 5, -5 })]
-    [InlineData(new int[] { })]
-
-    public void SortArrayReturnOk(IEnumerable<int> integers)
+    public async Task SortArrayReturnOk(int[] integers)
     {
+        // Arrange
         var sortedIntegers = integers.OrderBy(x => x);
+        var client = _factory.CreateClient();
+        var query = string.Join('&', integers.Select(i => $"integers={i}"));
 
-        var response = _talkBackController.GetSort(integers.ToList());
-        var ok = response.Result as OkObjectResult;
-        var returnedIntegers = ok.Value as IEnumerable<int>;
+        // Act
+        var response = await client.GetAsync($"api/talkback/sort?{query}");
 
-        response.Result.Should().BeOfType<OkObjectResult>();
-        returnedIntegers.Should().BeEquivalentTo(sortedIntegers);
+        // Assert
+        var content = await response.Content.ReadAsStringAsync();
+        var returnedIntegers = content.Trim('[').Trim(']').Split(",").Select(int.Parse).ToArray();
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(Enumerable.SequenceEqual(returnedIntegers, sortedIntegers));
     }
 
     [Fact]
-    public void SortArrayReturnBadRequestOnNull()
+    public async Task SortArrayReturnBadRequestOnNull()
     {
-        var result = _talkBackController.GetSort(null);
+        // Arrange
+        var client = _factory.CreateClient();
 
-        result.Result.Should().BeOfType<BadRequestObjectResult>();
+        // Act
+        var response = await client.GetAsync("api/talkback/sort");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }
